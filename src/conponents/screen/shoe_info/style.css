@@ -1,0 +1,42 @@
+.shoe {
+     display: flex;
+     flex-direction: column;
+     font-weight: 500;
+     
+}
+
+.name {
+     font-size: 170%;
+}
+
+.size {
+     margin: 2%;
+}
+
+.size:hover {
+     border: none;
+     background-color: rgb(60, 242, 84);
+     color: white;
+     cursor: pointer;
+}
+
+/* .sizes {
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+} */
+.input-quantity {
+     border: none;
+}
+.border-input-quantity{
+     border: ridge;
+     width: 35%;
+     display: flex;
+     align-items: center;
+} 
+
+.quantity-shoe {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+}

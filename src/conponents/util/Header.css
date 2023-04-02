@@ -1,0 +1,61 @@
+.header {
+     padding-top: 8px;
+     /* width: 100%; */
+     padding-left: 10%;
+     box-shadow: 0px 0px 8px 2px #000000;
+}
+
+.imageLogo {
+     margin-right: 10px;
+}
+
+.leftHeader {
+     display: flex;
+     flex-direction: row;
+}
+
+.nameLogo {
+     font-size: 17px;
+     font-weight: 600;
+}
+
+.rightHeader {
+     display: flex;
+     align-items: center;
+}
+
+.home {
+     margin-right: 10px;
+     color: #000000;
+}
+
+.about {
+     margin-right: 10px;
+     color: #000000;
+}
+
+.bills {
+     margin-right: 10px;
+     color: #000000;
+}
+
+.animation{
+     text-decoration: underline;
+     text-decoration-color: red;
+     text-underline-offset: 8px;
+}
+
+.home:hover {
+     cursor: pointer;
+}
+
+.about:hover {
+     cursor: pointer;
+}
+.bills:hover {
+     cursor: pointer;
+}
+
+.logoCart:hover {
+cursor: pointer;
+}

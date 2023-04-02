@@ -1,0 +1,79 @@
+.name-img {
+     
+     margin-left: 7%;
+     margin-right: 7%;
+}
+
+.cart-product{
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+
+.border-top {
+     margin-bottom: 1%;
+     border-top: groove;
+     border-top-width: 1px;
+}
+
+.border-bottom {
+     border-top: groove;
+     border-top-width: 1px;
+     margin-top: 0.5%;
+}
+
+.shoe-img {
+     background-color: #f2f0f0;
+}
+
+.name-quantity {
+     display: flex;
+     flex-direction: column;  
+     margin-top: 0%;
+     margin-left: 3%;
+     /* background-color: #f2f0f0; */
+}
+
+.shoe-name {
+     font-weight: 600;
+     font-size: 100%;
+     margin-bottom: 4%;
+}
+
+.shoe-quantity {
+     margin-top: 0%;
+     font-size: 70%;
+}
+
+.input-number {
+     margin-left: -4%;
+     /* margin-top: 1%; */
+     width: 10%;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+}
+
+.minus:hover {
+     cursor: pointer;
+}
+
+.plus:hover {
+     cursor: pointer;
+}
+
+.cancel:hover {
+     cursor: pointer;
+}
+
+.price {
+     margin-left: -4%;
+}
+
+ /* .price-total {
+     margin-left: 13%;
+} */
+
+.cancel-img {
+     margin-right: -10%;
+} 
