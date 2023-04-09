@@ -8,10 +8,10 @@ const Shoes = ({name, url, price, quantity}) => {
           navigate("/shoe-info");
      };
      return (
-          <div className="shoes">
+          <div onClick={handleShoeInfo} className="shoes">
                <div className='top-shoes'>
                     <Row className='shoe-img'>
-                         <Image style={{padding: 10}} width={210} src={url} onClick={handleShoeInfo} preview={false}/>
+                         <Image style={{padding: 10}} width={210} src={url}  preview={false}/>
                     </Row>
                     <Row className='addToCartLoGo'>
                          <Image style={{backgroundColor:'#ffffff', padding: '3px', borderRadius:'15px'}} width={30} src='/image/add-to-cart.png' preview={false}/>

@@ -195,7 +195,7 @@ const Cart = () => {
         <Col className="quantity">Quantity</Col>
         <Col className="subtotal">Subtotal</Col>
         <Col className="total">Total</Col>
-        <Col className="clear-cart">Clear Cart</Col>
+        <Col className="clear-cart">Clear</Col>
       </Row>
       {arrayShoes.map((shoe) => (
         <ProductInCart

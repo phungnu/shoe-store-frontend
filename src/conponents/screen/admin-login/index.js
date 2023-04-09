@@ -2,10 +2,13 @@ import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./style.css";
-
+import { useNavigate } from "react-router-dom";
 const Admin = () => {
+  
+  const navigate = useNavigate();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    navigate('/admin/manage');
   };
 
   return (

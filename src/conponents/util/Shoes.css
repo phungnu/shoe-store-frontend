@@ -10,6 +10,10 @@
      padding-right: 8px; */
 }
 
+.shoes:hover {
+     cursor: pointer;
+}
+
 .addToCartLoGo {
      margin-left: 80%;
 }

@@ -1,0 +1,23 @@
+.search-add {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-add-tbleft {
+    margin-left: 20px;
+    background-color: rgb(115, 167, 225);
+    color: white;
+}
+
+.btn-add-tbleft:hover {
+    background-color: #ffffff;
+    color: rgb(65, 38, 236);
+}
+
+.icon-delete:hover {
+    cursor: pointer;
+}
+
+.icon-edit:hover{
+    cursor: pointer;
+}
