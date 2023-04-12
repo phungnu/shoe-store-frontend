@@ -157,7 +157,7 @@ const AdminManage = () => {
 	return (
 		<div >
 		<Row>
-			<Col span={5}>
+			<Col span={4}>
 			<Toolbar />
 			</Col>
 			<Col span={18}>
