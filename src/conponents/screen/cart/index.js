@@ -1,128 +1,13 @@
-import Header from "../../util/Header";
-import ProductInCart from "../../util/ProductInCart";
 import { Row, Col, Button, Modal, Input, Select } from "antd";
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
-
-import "./style.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 
-const arrayShoes = [
-  {
-    name: "Nike 1",
-    url: "/image/shoe1.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe2.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe3.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe4.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe5.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe6.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe17.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe8.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe9.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe10.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe11.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe12.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe13.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe14.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe15.png",
-    price: 1200,
-    quantity: 20,
-    amount: 1,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe16.png",
-    price: 2000,
-    quantity: 20,
-    amount: 1,
-  },
-];
+import Header from "../../util/Header";
+import ProductInCart from "../../util/ProductInCart";
+import "./style.css";
+import { URL_API } from "../../config/constants";
+
 
 const Cart = () => {
 	const [total, setTotal] = useState(0);
@@ -143,10 +28,38 @@ const Cart = () => {
 	const sum = () => {
 		let tmp = 0;
 		for (let i = 0; i < arrayShoes.length; i++) {
-		tmp += arrayShoes[i].price * arrayShoes[i].amount;
+			tmp += arrayShoes[i].price * arrayShoes[i].amount;
 		}
 		setTotal(tmp);
 	};
+
+
+	const [arrayShoes, setArrayShoes] = useState([]);
+
+	const getDataListShoe = async () => {
+		let response;
+        let code = 222;
+		await axios.get(`${URL_API}/shoe`)
+			.then( res => {
+				console.log(res);
+				if ( res.data.statusCode=='OK') {
+					response = res.data;
+					code = 200
+				}
+			})
+			.catch(error => {
+				code = 404
+			});
+		if (code == 200 ) {
+			setArrayShoes(response);
+		} 
+		return response;
+	}
+
+	useEffect(() => {
+		getDataListShoe()
+	}, [])
+
 	useEffect(() => {
 		sum();
 	}, []);
@@ -222,7 +135,7 @@ const Cart = () => {
 			<Header page={"cart"} />
 			<Row className="content">
 				<Col className="product-name" span={7}>
-				Product Name
+					Product Name
 				</Col>
 				<Col className="quantity">Quantity</Col>
 				<Col className="subtotal">Subtotal</Col>
@@ -286,7 +199,7 @@ const Cart = () => {
 					labelInValue
 					defaultValue="--Chọn thành phố--"
 					style={{
-					width: 200,
+						width: 200,
 					}}
 					onChange={handleChooseCity}
 					options={cityList}
@@ -295,7 +208,7 @@ const Cart = () => {
 					labelInValue
 					defaultValue="--Chọn quận/huyện--"
 					style={{
-					width: 200,
+						width: 200,
 					}}
 					onChange={handleChooseDistrict}
 					options={districtList}
@@ -304,7 +217,7 @@ const Cart = () => {
 					labelInValue
 					defaultValue="--Chọn thị trấn/xã--"
 					style={{
-					width: 200,
+						width: 200,
 					}}
 					onChange={handleChooseWard}
 					options={wardList}

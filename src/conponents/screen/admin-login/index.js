@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
+import { URL_API } from "../../config/constants";
 
 const Admin = () => {
   
@@ -15,10 +15,9 @@ const Admin = () => {
 	toast.configure();
 	
 	const  checkLogin = async (values) => {
-		console.log("Received values of form: ", values);
 		let response;
         let code = 222;
-		await axios.post(`http://localhost:3008/users/login`, {
+		await axios.post(`${URL_API}/users/login`, {
 			username: values.username,
 			password: values.password
 		}).then( res => {
