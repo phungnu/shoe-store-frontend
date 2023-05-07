@@ -2,142 +2,60 @@ import { useNavigate } from "react-router-dom";
 import { Image, Row, Col } from "antd";
 import Header from "../../util/Header";
 import Shoes from "../../util/Shoes";
-
+import { useState, useEffect } from 'react';
+import { URL_API } from "../../config/constants";
+import axios from 'axios';
 import "./style.css";
+import React from "react";
 
-const array = [
-  {
-    name: "Nike 1",
-    url: "/image/shoe1.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe2.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe3.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe4.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe5.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe6.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe17.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe8.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe9.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe10.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe11.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe12.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe13.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe14.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe15.png",
-    price: 1200,
-    quantity: 20,
-  },
-  {
-    name: "Nike 1",
-    url: "/image/shoe16.png",
-    price: 1200,
-    quantity: 20,
-  },
-];
 
 const Home = () => {
-  const navigate = useNavigate();
+  	const [arrayShoe, setArrayShoes] = useState([]);
 
-  const redirectToCart = () => {
-    navigate("/cart");
-  };
+	const getDataListShoe = async () => {
+		let response;
+        let code = 222;
+		await axios.get(`${URL_API}/shoe/getAll`)
+			.then( res => {
+				console.log(res);
+				if ( res.data.statusCode=='OK') {
+					response = res.data;
+					code = 200
+				}
+			})
+			.catch(error => {
+				code = 404
+			});
+		console.log(code);
+		if (code == 200 ) {
+			setArrayShoes(response.data);
+		} 
+		return response;
+	}
 
-  return (
-    <div>
-      <Header page={'home'} />
+	useEffect(() => {
+		getDataListShoe()
+	}, [])
 
-      <div className="content">
-        <Row
-          gutter={{
-            xs: 8,
-            sm: 16,
-            md: 24,
-            lg: 32,
-          }}
-        >
-          {array.map((shoe) => (
-            <Col className="gutter-row" sm={24}  md={12} lg={8} xl={6}>
-              <Shoes
-                name={shoe.name}
-                url={shoe.url}
-                price={shoe.price}
-                quantity={shoe.quantity}
-              />
-            </Col>
-          ))}
-        </Row>
-      </div>
-    </div>
-  );
+	return (
+		<div>
+		<Header page={'home'} />
+
+		<div className="content">
+			{arrayShoe.map((shoe) => (
+				<Col className="gutter-row" sm={24}  md={12} lg={8} xl={6}>
+					<Shoes
+						id={shoe.id}
+						name={shoe.name}
+						url={shoe.imageUrl}
+						price={shoe.price}
+						quantity={shoe.quantity}
+					/>
+				</Col>
+			))}
+		</div>
+		</div>
+	);
 };
 
 export default Home;

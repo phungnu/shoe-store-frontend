@@ -1,38 +1,72 @@
 import {Row, Col, Image, Button, Input} from 'antd';
 import Header from "../../util/Header";
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import { URL_API } from "../../config/constants";
+import axios from 'axios';
 import './style.css'
+import { useSearchParams } from "react-router-dom";
+import { cartService } from '../../service/cart';
 const ShoeInfo = () => {
+
+     const [searchParams] = useSearchParams();
+
+     const [shoe, setShoe] = useState([]);
+
+	const getDataShoe = async () => {
+		let response;
+          let code = 222;
+		await axios.post(`${URL_API}/shoe/getInfo`,{
+               id: searchParams.get('id')
+          })
+			.then( res => {
+				console.log(res);
+				if ( res.data.statusCode=='OK') {
+					response = res.data;
+					code = 200
+				}
+			})
+			.catch(error => {
+				code = 404
+			});
+		console.log(code);
+		if (code == 200 ) {
+			setShoe(response.data);
+		} 
+		return response;
+	}
+
+	useEffect(() => {
+		getDataShoe()
+	}, [])
+
      const [number, setNumber] = useState(1);
      const handlePlus = () => {
           setNumber(number+1)
-        };
+     };
       
-        const handleMinus = () => {
+     const handleMinus = () => {
           setNumber(number-1)
-        };
+     };
+
+     const addToCart = () => {
+          let cart = cartService.get() || [];
+          const shoeinCart = {...shoe, quantity: number}
+          cart.push(shoeinCart);
+          cartService.set(cart);
+     }
       
      return (
           <div className='shoe'>
                <Header page={"shoe-info"} />
                <Row >
                     <Col className='shoe-image' span={10}>
-                         <Image src='/image/shoe1.png' preview={false} />
+                         <Image src={shoe.imageUrl} preview={false} />
                     </Col>
                     <Col span={12}>
-                         <p className='name'>Giày Nike Air Jordan 1 Mid Gym Red Panda [BQ6472 061]</p>
-                         <p className='cost'> Giá: $1000</p>
-                         <p className='code'>Mã sản phẩm: 16037</p>
-                         <p className='type'>Loại sản phẩm: Giày Sneaker</p>
+                         <p className='name'>{shoe.name}</p>
+                         <p className='cost'> Giá: {shoe.price}</p>
                          <p className='description'>Mô tả:
-                              Phiên bản Giày Nike Air Jordan 1 Mid Gym Red 
-                              Panda đã cập bến tại Minhshopvn. Phần thiết kế 
-                              phối màu thời trang đã tạo nên sức hút của các 
-                              dòng Nike Jordan 1 Mid và phiên bản này xứng đáng 
-                              có 1 vị trí trong tủ đồ nhà mình . Hiên sản phẩm 
-                              đang có giá cực ưu đãi tại 60/18 vạn kiếp p3 
-                              bình thạnh
+                              {shoe.description}
                          </p>
                          <Row >
                               <Col  span={16}>
@@ -59,7 +93,7 @@ const ShoeInfo = () => {
                                         <Input className="input-quantity" value={number} style={{width: "50px", height: "30px"}}/>
                                         <Image className="plus" src="/image/plus.png" width={10} preview={false} onClick={handlePlus}/>
                                    </div>
-                                   <Button className='add-to-cart'>Thêm vào giỏ hàng</Button>
+                                   <Button onClick={addToCart} className='add-to-cart'>Thêm vào giỏ hàng</Button>
                                    <Button className='buy'>Mua ngay</Button>
                               </Col>
                          </Row>

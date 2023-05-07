@@ -1,4 +1,4 @@
-import { Row, Col, Button, Modal, Input, Select } from "antd";
+import { Row, Col, Button, Modal, Input, Select, Image } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,6 +7,7 @@ import Header from "../../util/Header";
 import ProductInCart from "../../util/ProductInCart";
 import "./style.css";
 import { URL_API } from "../../config/constants";
+import { cartService } from "../../service/cart";
 
 
 const Cart = () => {
@@ -33,32 +34,10 @@ const Cart = () => {
 		setTotal(tmp);
 	};
 
+	const cart = cartService.get();
+	console.log(cart)
 
-	const [arrayShoes, setArrayShoes] = useState([]);
-
-	const getDataListShoe = async () => {
-		let response;
-        let code = 222;
-		await axios.get(`${URL_API}/shoe`)
-			.then( res => {
-				console.log(res);
-				if ( res.data.statusCode=='OK') {
-					response = res.data;
-					code = 200
-				}
-			})
-			.catch(error => {
-				code = 404
-			});
-		if (code == 200 ) {
-			setArrayShoes(response);
-		} 
-		return response;
-	}
-
-	useEffect(() => {
-		getDataListShoe()
-	}, [])
+	const [arrayShoes, setArrayShoes] = useState(cart || []);
 
 	useEffect(() => {
 		sum();
@@ -142,10 +121,15 @@ const Cart = () => {
 				<Col className="total">Total</Col>
 				<Col className="clear-cart">Clear</Col>
 			</Row>
+			<div className='cartEmpty'>
+				{arrayShoes.length==0 && (
+					<Image src='/image/cart-empty.png' preview={false} />
+				) }
+			</div>
 			{arrayShoes.map((shoe) => (
 				<ProductInCart
 					name={shoe.name}
-					url={shoe.url}
+					url={shoe.imageUrl}
 					price={shoe.price}
 					quantity={shoe.quantity}
 					amount={shoe.amount}

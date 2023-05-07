@@ -2,13 +2,13 @@ import './Shoes.css';
 import {Row, Image} from "antd";
 import { useNavigate } from 'react-router-dom';
 
-const Shoes = ({name, url, price, quantity}) => {
+const Shoes = ({id, name, url, price, quantity}) => {
      const navigate = useNavigate();
-     const handleShoeInfo = () => {
-          navigate("/shoe-info");
+     const handleShoeInfo = (id) => {
+          navigate(`/shoe-info?id=${id}`);
      };
      return (
-          <div onClick={handleShoeInfo} className="shoes">
+          <div onClick={() => handleShoeInfo(id)} className="shoes">
                <div className='top-shoes'>
                     <Row className='shoe-img'>
                          <Image style={{padding: 10}} width={210} src={url}  preview={false}/>
