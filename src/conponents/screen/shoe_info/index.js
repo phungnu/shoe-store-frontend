@@ -50,7 +50,7 @@ const ShoeInfo = () => {
 
      const addToCart = () => {
           let cart = cartService.get() || [];
-          const shoeinCart = {...shoe, quantity: number}
+          const shoeinCart = {...shoe, amount: number}
           cart.push(shoeinCart);
           cartService.set(cart);
      }

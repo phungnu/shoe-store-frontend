@@ -3,7 +3,6 @@
 .content {
      margin-top: 2%;
      display: flex;
-     justify-content: space-between;
      margin-left: 7%;
      margin-right: 7%;
 }
@@ -11,7 +10,9 @@
 .product-name {
      font-weight: 600;
 }
-
+.sizes {
+     font-weight: 600;
+}
 .quantity {
      font-weight: 600;
 }
@@ -29,7 +30,6 @@
 }
 
 .bottom {
-     margin-bottom: 20px;
      margin-left: 6%;
      margin-right: 6%;
 }
@@ -37,18 +37,30 @@
 .bottom-back {
      color: red;
      border-color: red;
-     margin-top: 5%;
+     margin-top: 3%;
 }
 
 .buy-total {
      margin-left: 80%;
-     margin-top: 3%;
 }
 
 .bottom-buy {
      color: white;
-     background-color: rgb(31, 101, 3);
+     background-color: rgb(59, 168, 45);
      margin-left: 23%;
+     padding-left: 50px;
+     padding-right: 50px;
+     text-align: center;
+     font-weight: 600;
+}
+
+.bottom-buy:hover {
+     background-color: white;
+     margin-left: 23%;
+     padding-left: 50px;
+     padding-right: 50px;
+     text-align: center;
+     font-weight: 600;
 }
 
 .first-name{
@@ -69,6 +81,7 @@
 }
 
 .message {
+     min-height: 70px;
      height: 100%;
 }
 
@@ -78,4 +91,58 @@
      justify-content: center;
      width: 100%;
      height: auto;
+}
+
+.content-modal {
+     padding: 20px
+}
+
+.select-address {
+     display: flex;
+     justify-content: space-between;
+}
+
+.apartment-number {
+     width: 300px;
+     margin-top: 10px;
+}
+
+.confirm-modal {
+     display: flex;
+     flex-direction: row;
+     margin-top: 20px;
+}
+
+.info-customer {
+     background-color: white;
+     padding: 10px
+}
+
+.info-products {
+     background-color: rgb(247, 247, 247);
+     padding: 10px;
+     border-radius: 30px;
+}
+
+.title-info {
+     text-align: center;
+}
+
+.line-big {
+     margin-bottom: 2%;
+     margin-top: 2%;
+     border-top: groove;
+     border-top-width: 2px;
+}
+
+.line-small {
+     margin-bottom: 2%;
+     border-top: groove;
+     border-top-width: 2px;
+     margin-left: 15px;
+     margin-right: 15px;
+}
+
+.total-price {
+     font-size: 18px;
 }

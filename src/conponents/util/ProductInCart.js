@@ -1,8 +1,9 @@
 import { Row, Col, Image, Input, Button, Modal } from "antd";
 import "./ProductInCart.css";
 import { useState } from 'react'
+import { cartService } from "../service/cart";
 
-const ProductInCart = ({name, quantity, price, url, amount, changeTotal}) => {
+const ProductInCart = ({id, size, name, quantity, price, url, amount, changeTotal, resetCart}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [number, setNumber] = useState(amount);
@@ -11,6 +12,10 @@ const ProductInCart = ({name, quantity, price, url, amount, changeTotal}) => {
     setIsModalOpen(true);
   };
   const handleOk = () => {
+    let cart = cartService.get();
+    cart = cart.filter((shoe) => shoe.id !== id);
+    resetCart(cart);
+    changeTotal(total => total - price*amount)
     setIsModalOpen(false);
   };
   const handleCancel = () => {
@@ -41,10 +46,11 @@ const ProductInCart = ({name, quantity, price, url, amount, changeTotal}) => {
             />
             <div className="name-quantity">
               <p className="shoe-name">{name}</p>
-              <p className="shoe-quantity">Quantity: {quantity}</p>
+              {/* <p className="shoe-quantity">Quantity: {quantity}</p> */}
             </div>
           </Row>
         </Col>
+        <Col className="size">{size}</Col>
         <Col className="input-number">
           <Image className="minus" src="/image/minus.png" width={10} preview={false} onClick={handleMinus}/>
           <Input className="input-quantity" value={number} style={{width: "50px", height: "30px"}}/>
