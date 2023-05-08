@@ -16,6 +16,7 @@ const Cart = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const showModal = () => {
+		setFirst(false);
 		setIsModalOpen(true);
 		callAPI(host);
 	};
@@ -33,39 +34,40 @@ const Cart = () => {
 	};
 
 	const cart = cartService.get();
-	console.log(cart)
+	// console.log(cart)
 
-	// const init = [
-	// 	{
-	// 		name: 'Giày Nike Air Jordan 1 Low SE Craft ',
-	// 		price: 200000,
-	// 		imageUrl: '/image/shoe1.png',
-	// 		description: 'this is shoe 1',
-	// 		quantity: 100,
-	// 		amount: 2,
-	// 		size: 43
-	// 	},
-	// 	{
-	// 		name: 'shoe 2',
-	// 		price: 250000,
-	// 		imageUrl: '/image/shoe2.png',
-	// 		description: 'this is shoe 2',
-	// 		quantity: 10,
-	// 		amount: 1,
-	// 		size: 43
-	// 	},
-	// 	{
-	// 		name: 'shoe 3',
-	// 		price: 300000,
-	// 		imageUrl: '/image/shoe3.png',
-	// 		description: 'this is shoe 1',
-	// 		quantity: 100,
-	// 		amount: 1,
-	// 		size: 43
-	// 	}
-	// ]
+	const init = [
+		{
+			name: 'Giày Nike Air Jordan 1 Low SE Craft ',
+			price: 200000,
+			imageUrl: '/image/shoe1.png',
+			description: 'this is shoe 1',
+			quantity: 100,
+			amount: 2,
+			size: 43
+		},
+		{
+			name: 'shoe 2',
+			price: 250000,
+			imageUrl: '/image/shoe2.png',
+			description: 'this is shoe 2',
+			quantity: 10,
+			amount: 1,
+			size: 43
+		},
+		{
+			name: 'shoe 3',
+			price: 300000,
+			imageUrl: '/image/shoe3.png',
+			description: 'this is shoe 1',
+			quantity: 100,
+			amount: 1,
+			size: 43
+		}
+	]
 
-	const [arrayShoes, setArrayShoes] = useState(cart || []);
+	// const [arrayShoes, setArrayShoes] = useState(cart || []);
+	const [arrayShoes, setArrayShoes] = useState(init);
 
 	useEffect(() => {
 		sum();
@@ -178,31 +180,70 @@ const Cart = () => {
 		hideModal();
 	}
 
+	const [errorName, setErrorName] = useState('');
+	const [errorPhone, setErrorPhone] = useState('');
+	const [errorAddress, setErrorAddress] = useState('');
+
+	const [first, setFirst] = useState(true);
+
+	const validateForm = () => {
+		if ( first )
+			return null;
+		let check = true;
+		var regexPhone = /^0\d{9}$/;
+		if ( fName=='' || lName=='') {
+			setErrorName('Họ tên không được để trống');
+			check = false;
+		} else {
+			setErrorName('')
+		}
+		if ( phone=='') {
+			setErrorPhone('Số điện thoại không được để trống');
+			check = false;
+		} else if ( regexPhone.test(phone)==false ){
+			setErrorPhone('Số điện thoại không đúng định dạng');
+			check = false;
+		} else {
+			setErrorPhone('');
+		}
+		if ( city=='--Chọn thành phố--' || district=='--Chọn quận/huyện--' || ward=='--Chọn thị trấn/xã--' || homeNumber=='') {
+			setErrorAddress('Địa chỉ không được bỏ trống');
+			check = false;
+		} else {
+			setErrorAddress('')
+		}
+		
+		return check;			
+	}
+
 	const steps = [
 		{
 			title: 'Nhập thông tin người mua',
 			content: <div className="content-info-customer" >
-				<p>
-					Họ và tên<span className="obligatory">*</span>
+				<p className="row-content">
+					<div>Họ và tên <span className="obligatory">*</span> 
+					</div><div className="error-message">{errorName}</div>
 				</p>
 				<Row className="name-custmmer">
 					<Input value={fName} onChange={(e) => setFName(e.target.value)} className="first-name" placeholder="Họ" />
 					<Input value={lName} onChange={(e) => setLName(e.target.value)} className="last-name" placeholder="Tên" />
 				</Row>
 				<p>
-					Email<span className="obligatory">*</span>
+					Email (tùy chọn)
 				</p>
 				<Row>
 					<Input value={email} onChange={(e) => setEmail(e.target.value)} className="email" placeholder="Email" />
 				</Row>
-				<p>
-					Số điện thoại<span className="obligatory">*</span>
+				<p className="row-content">
+					<div>Số điện thoại <span className="obligatory">*</span> 
+					</div><div className="error-message">{errorPhone}</div>
 				</p>
 				<Row>
 					<Input value={phone} onChange={(e) => setPhone(e.target.value)} className="phone" placeholder="Số điện thoại" />
 				</Row>
-				<p>
-					Địa chỉ<span className="obligatory">*</span>
+				<p className="row-content">
+					<div>Địa chỉ <span className="obligatory">*</span> 
+					</div><div className="error-message">{errorAddress}</div>
 				</p>
 				<div className="select-address">
 					<Select
@@ -295,8 +336,15 @@ const Cart = () => {
 		}
 	]	
 
+	useEffect(() => {
+		validateForm()
+	}, [phone, lName, fName, city, district, ward, homeNumber])
+
 	const [current, setCurrent] = useState(0);
 	const next = () => {
+		const check = validateForm();
+		if ( check==false || check==null)
+			return;
 		setCurrent(current + 1);
 		setAddress(homeNumber+', '+ward+', '+district+', '+city);
 	};

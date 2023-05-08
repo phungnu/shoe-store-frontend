@@ -35,7 +35,7 @@
 }
 
 .bottom-back {
-     color: red;
+     color: rgb(22, 103, 196);
      border-color: red;
      margin-top: 3%;
 }
@@ -145,4 +145,14 @@
 
 .total-price {
      font-size: 18px;
+}
+
+.row-content {
+     display: flex;
+     flex-direction: row;
+}
+
+.error-message {
+     color: red;
+     margin-left: 10px;
 }
