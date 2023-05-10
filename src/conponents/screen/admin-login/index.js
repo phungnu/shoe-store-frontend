@@ -7,6 +7,7 @@ import axios from "axios";
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { URL_API } from "../../config/constants";
+import { userService } from "../../service/user";
 
 const Admin = () => {
   
@@ -32,6 +33,7 @@ const Admin = () => {
 			});
 		if (code == 200 ) {
 			notify('success');
+			userService.set("loggedIn");
 			setTimeout(() => {
 				navigate('/admin/manage');
 			}, 1000)

@@ -8,6 +8,7 @@ import ShoeInfo from './conponents/screen/shoe_info/index';
 import Admin from './conponents/screen/admin-login/index';
 import AdminManage from './conponents/screen/admin-manage/index';
 import Statistic from './conponents/screen/admin-manage/statistic/index';
+import SecuredRoute from './conponents/util/SecuredRoute';
 
 function App() {
   return (
@@ -18,8 +19,8 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shoe-info" element={<ShoeInfo />} />
         <Route path="admin" element={<Admin />} />
-        <Route path="admin/manage" element={<AdminManage/>} />
-        <Route path='admin/statistic' element={<Statistic />} />
+        <Route path="admin/manage" element={ <SecuredRoute> <AdminManage/> </SecuredRoute> } />
+        <Route path="admin/statistic" element={ <SecuredRoute> <Statistic/> </SecuredRoute> } />
       </Routes>
     </BrowserRouter>
   );
