@@ -25,6 +25,7 @@ const Admin = () => {
 				console.log(res);
 				if ( res.data.statusCode=='OK') {
 					response = res.data;
+					userService.set(res.data.data);
 					code = 200
 				}
 			})
@@ -33,7 +34,7 @@ const Admin = () => {
 			});
 		if (code == 200 ) {
 			notify('success');
-			userService.set("loggedIn");
+			
 			setTimeout(() => {
 				navigate('/admin/manage');
 			}, 1000)

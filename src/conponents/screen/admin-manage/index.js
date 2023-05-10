@@ -1,10 +1,16 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Image, Input, Button, Row, Col, Table, Modal, Tooltip  } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 import Toolbar from "./Toolbar";
+import axios from "axios";
+import { URL_API } from "../../config/constants";
+import TextArea from "antd/es/input/TextArea";
+import { userService } from "../../service/user";
+
+const { confirm } = Modal;
 
 const columnsLeft = [
 	{
@@ -25,7 +31,7 @@ const columnsLeft = [
 	},
 	{
 		title: 'Số lượng',
-		dataIndex: 'amount',
+		dataIndex: 'quantity',
 	},
 	{
 		title: '',
@@ -42,7 +48,7 @@ const data = [
 		name: "Nike 1",
 		image: <Image src='/image/shoe11.png' preview={false} width={140} />,
 		price: 1200,
-		amount: 20,
+		quantity: 20,
 		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
 		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
 	},
@@ -50,7 +56,7 @@ const data = [
 		name: "Nike 1",
 		image: <Image src='/image/shoe12.png' preview={false} width={140} />,
 		price: 1200,
-		amount: 20,
+		quantity: 20,
 		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
 		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
 	},
@@ -58,7 +64,7 @@ const data = [
 		name: "Nike 1",
 		image: <Image src='/image/shoe13.png' preview={false} width={140} />,
 		price: 1200,
-		amount: 20,
+		quantity: 20,
 		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
 		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
 	},
@@ -66,15 +72,102 @@ const data = [
 		name: "Nike 1",
 		image: <Image src='/image/shoe14.png' preview={false} width={140} />,
 		price: 1200,
-		amount: 20,
+		quantity: 20,
 		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
 		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
 	},
 ]
 
 const AdminManage = () => {
-	const navigate = useNavigate();
 	const [dataLeft, setDataLeft] = useState(data);
+
+	// const getDataShoe = async () => {
+	// 	await axios.get(`${URL_API}/shoe/getAll`)
+	// 				.then( res => {
+	// 					if ( res.data.statusCode=='OK' ) {
+	// 						let shoes = [];
+	// 						for( let i = 0; i < res.data.data.length; i++ ) {
+	// 							shoes.push ({
+	// 								id: res.data.data[i].id,
+	// 								name : res.data.data[i].name,
+	// 								imageUrl: <Image src={res.data.data[i].imageUrl} preview={false} width={140} />,
+	// 								price: res.data.data[i].price,
+	// 								quantity: res.data.data[i].price,
+	// 								delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(id, name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
+	// 								edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(res.data.data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
+	// 							})
+	// 						}
+	// 						setDataLeft(shoes);
+	// 					}
+	// 				}).catch(err => console.log(err))
+	// }
+
+	// useEffect(() => {
+	// 	getDataShoe()
+	// }, [])
+
+	const onOpenModalEdit = () => {
+		setModeModal('edit');
+		setNameShoeModal('test name');
+		setPriceShoeModal('200');
+		setNoteModal('test note');
+		setImageUrlModal('/test.png')
+		setQuantityModal(100)
+		setOpen(true)
+	}
+
+	const [nameShoeModal, setNameShoeModal] = useState('test name');
+	const [priceShoeModal, setPriceShoeModal] = useState('');
+	const [imageUrlModal, setImageUrlModal] = useState('./test.png');
+	const [noteModal, setNoteModal] = useState('');
+	const [quantityModal, setQuantityModal] = useState('');	
+
+
+	const editShoe = async (shoe) => {
+		await axios.post(`${URL_API}/shoe/update`,{
+			id: shoe.id,
+			name: shoe.name,
+			price: shoe.price,
+			description: shoe.description,
+			imageUrl: shoe.imageUrl,
+			quantity: shoe.quantity
+		}). then( res => {
+			if ( res.data.statusCode=='OK' ) {
+				console.log('edit success');
+				// await getDataShoe();
+				
+			}
+		}). catch( err => console.log(err))
+		handleClose();
+	}
+
+	const delShoe = async (id) => {
+		await axios.post(`${URL_API}/shoe/delete`, {
+			id: id
+		}). then( res => {
+			if ( res.data.statusCode=='OK' ) {
+				console.log('delete success');
+				// await getDataShoe();
+			}
+		}). catch( err => console.log(err))
+	}
+
+	const showDelConfirm = (id, title) => {
+		confirm({
+			title: 'Bạn có chắc chắn muôn xóa ' + title,
+			icon: <ExclamationCircleFilled />,
+			content: '',
+			okText: 'Xóa',
+			okType: 'danger',
+			cancelText: 'Không',
+			onOk() {
+				delShoe(id)
+			},
+			onCancel() {
+				console.log('Cancel');
+			},
+		})
+	}
 
 	const [selectedRowKeysLeft, setSelectedRowKeysLeft] = useState([]);
 	const onSelectChangeLeft = (newSelectedRowKeys) => {
@@ -119,29 +212,36 @@ const AdminManage = () => {
 		],
 	};
 
-	const [ nameAdd, setNameAdd] = useState('');
-	const [ priceAdd, setPriceAdd] = useState('');
-	const [ amountAdd, setAmountAdd ] = useState('');
-	const [ urlAdd, setUrlAdd] = useState('');
+	const user = userService.get();
 
-	const handleAddEvent = async () => {
-		console.log(urlAdd);
+	const handleAddShoe = async () => {
+		const tmp = imageUrlModal.split('\\');
 
-		const tmp = urlAdd.split('\\');
+		await axios.post(`${URL_API}/shoe`, {
+			name : nameShoeModal,
+			imageUrl: <Image src={`/image/${tmp[tmp.length - 1]}`} preview={false} width={140} />,
+			price: priceShoeModal,
+			quantity: quantityModal,
+			description: noteModal,
+			userId: user.id
+		}). then( res => {
+			if ( res.data.statusCode=='OK' ) {
+				console.log('Add shoe success');
+				// await getDataShoe();
 
-		console.log(tmp);
-		console.log(tmp[tmp.length - 1])
+			}
+		}). catch( err => console.log(err))
 
-		const product = {
-			name : nameAdd,
-			image: <Image src={`/image/${tmp[tmp.length - 1]}`} preview={false} width={140} />,
-			price: priceAdd,
-			amount: amountAdd,
-			delete: <Tooltip title='Xóa'><Image className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
-			edit: <Tooltip title='Sửa'><Image className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
-		}
+		// const product = {
+		// 	name : nameShoeModal,
+		// 	imageUrl: <Image src={`/image/${tmp[tmp.length - 1]}`} preview={false} width={140} />,
+		// 	price: priceShoeModal,
+		// 	quantity: quantityModal,
+		// 	delete: <Tooltip title='Xóa'><Image className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
+		// 	edit: <Tooltip title='Sửa'><Image className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
+		// }
 
-		setDataLeft(dataLeft => [...dataLeft, product])
+		// setDataLeft(dataLeft => [...dataLeft, product])
 
         handleClose();
     }
@@ -152,7 +252,8 @@ const AdminManage = () => {
     const handleClose = () => {
         setOpen(false);
     };
-	
+
+	const [modeModal, setModeModal] = useState('add');
 
 	return (
 		<div >
@@ -174,24 +275,34 @@ const AdminManage = () => {
 								
 							/>
 							<Button onClick={handleOpen} className='btn-add-tbleft'>Thêm sản phẩm</Button>
-							<Modal title="Thêm sản phẩm" visible={open}
-								onOk={handleAddEvent} onCancel={handleClose}>
+							<Modal title={modeModal=='add' ? 'Thêm sản phẩm' : 'Chỉnh sửa sản phẩm'} visible={open}
+								onOk={modeModal=='add' ? handleAddShoe : editShoe } onCancel={handleClose}>
 									<Row>
 										<p>Tên sản phẩm</p>
-										<Input onChange={(e) => setNameAdd(e.target.value)}  placeholder="Nhập tên sản phẩm" />
+										<Input value={nameShoeModal} onChange={(e) => setNameShoeModal(e.target.value)}  placeholder="Nhập tên sản phẩm" />
 									</Row>
 									<Row>
 										<p>Ảnh minh họa</p>
-										<Input type="file" onChange={(e) => setUrlAdd(e.target.value)}  placeholder="Chọn ảnh" />
+										<Input type="file" onChange={(e) => setImageUrlModal(e.target.value)}  placeholder="Chọn ảnh" />
+									</Row>
+									<Row>
+										<p>Mô tả</p>
+										<TextArea value={noteModal} onChange={(e) => setNoteModal(e.target.value)} placeholder="mô tả" />
 									</Row>
 									<Row style={{marginTop: 10}}>
 										<p>Giá sản phẩm</p>
-										<Input onChange={(e) => setPriceAdd(e.target.value)}  placeholder="Nhập giá sản phẩm" />
+										<Input value={priceShoeModal} onChange={(e) => setPriceShoeModal(e.target.value)}  placeholder="Nhập giá sản phẩm" />
 									</Row>
 									<Row style={{marginTop: 10}}>
 										<p>Số lượng</p>
-										<Input onChange={(e) => setAmountAdd(e.target.value)}  placeholder="Nhập số lượng sản phẩm" />
+										<Input value={quantityModal} onChange={(e) => setQuantityModal(e.target.value)}  placeholder="Nhập số lượng sản phẩm" />
 									</Row>
+							</Modal>
+							<Modal 
+								title="Bạn có chắc chắn muốn xóa không" 
+								visible={isModalOpen} 
+								onOk={handleOk} 
+								onCancel={handleCancel}>
 							</Modal>
 						</div>
 						<Table 
