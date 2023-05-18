@@ -8,9 +8,13 @@ import ProductInCart from "../../util/ProductInCart";
 import "./style.css";
 import { URL_API } from "../../config/constants";
 import { cartService } from "../../service/cart";
-
+import {toast} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { formatter } from "../../service/format";
 
 const Cart = () => {
+
+	toast.configure();
 	const [total, setTotal] = useState(0);
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,40 +38,8 @@ const Cart = () => {
 	};
 
 	const cart = cartService.get();
-	// console.log(cart)
-
-	const init = [
-		{
-			name: 'Giày Nike Air Jordan 1 Low SE Craft ',
-			price: 200000,
-			imageUrl: '/image/shoe1.png',
-			description: 'this is shoe 1',
-			quantity: 100,
-			amount: 2,
-			size: 43
-		},
-		{
-			name: 'shoe 2',
-			price: 250000,
-			imageUrl: '/image/shoe2.png',
-			description: 'this is shoe 2',
-			quantity: 10,
-			amount: 1,
-			size: 43
-		},
-		{
-			name: 'shoe 3',
-			price: 300000,
-			imageUrl: '/image/shoe3.png',
-			description: 'this is shoe 1',
-			quantity: 100,
-			amount: 1,
-			size: 43
-		}
-	]
-
-	// const [arrayShoes, setArrayShoes] = useState(cart || []);
-	const [arrayShoes, setArrayShoes] = useState(init);
+	
+	const [arrayShoes, setArrayShoes] = useState(cart || []);
 
 	useEffect(() => {
 		sum();
@@ -174,7 +146,11 @@ const Cart = () => {
 			shoeBills: shoeBills
 		}). then( res => {
 			if ( res.data.statusCode=='OK' ) {
-
+				cartService.set([]);
+				setArrayShoes([]);
+				toast.success('Đặt hàng thành công', {
+					position: toast.POSITION.TOP_CENTER
+				})
 			}
 		}). catch( err => console.log(err))
 		hideModal();
@@ -304,10 +280,10 @@ const Cart = () => {
 							<div>
 								<Row>
 									<Col span={1}></Col>
-									<Col span={12}>{shoe.name} - <b>Size: </b> {shoe.size}</Col>
+									<Col span={12}>{shoe.name} - <b>Size: </b> {formatter.format(shoe.size)}</Col>
 									<Col span={3}></Col>
 									<Col span={4}>x {shoe.amount}</Col>
-									<Col span={3}>{shoe.price * shoe.amount}</Col>
+									<Col span={3}>{formatter.format(shoe.price * shoe.amount)}</Col>
 								</Row>
 								<div className="line-small"></div>
 							</div>
@@ -316,13 +292,13 @@ const Cart = () => {
 					<Row>
 						<Col span={1}></Col>
 						<Col span={16}><b>Giao hàng</b></Col>
-						<Col span={7}>Đồng giá: <b>25000</b></Col>
+						<Col span={7}>Đồng giá: <b>{formatter.format(25000)}</b></Col>
 					</Row>
 					<div className="line-big"></div>
 					<Row>
 						<Col span={1}></Col>
 						<Col className="total-price" span={19}><b>Tổng: </b></Col>
-						<Col className="total-price" span={4}><b>{total + 25000}</b></Col>
+						<Col className="total-price" span={4}><b>{formatter.format(total + 25000)}</b></Col>
 					</Row>
 					<div className="line-big"></div>
 					<Radio.Group value={valueRadio} onChange={changeRadio}>
@@ -393,9 +369,11 @@ const Cart = () => {
 					&lt;--- Tiếp tục mua hàng
 				</Button>
 				<Col className="buy-total">
-				<Button onClick={showModal} className="bottom-buy">
-					MUA NGAY
-				</Button>
+				{arrayShoes.length > 0 &&
+					<Button onClick={showModal} className="bottom-buy">
+						MUA NGAY
+					</Button>
+				}
 				</Col>
 			</Row>
 

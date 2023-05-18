@@ -8,6 +8,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { cartService } from '../../service/cart';
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { formatter } from '../../service/format';
 const ShoeInfo = () => {
 
      const [searchParams] = useSearchParams();
@@ -15,15 +16,6 @@ const ShoeInfo = () => {
      toast.configure();
      
      const navigate = useNavigate();
-
-     // const init = {
-     //      id : 1,
-     //      name: 'Giày Nike Air Jordan 1 Low SE Craft ',
-     //      price: 200000,
-     //      imageUrl: '/image/shoe1.png',
-     //      description: 'this is shoe 1',
-     //      quantity: 100,
-     // }
 
      const [shoe, setShoe] = useState({});
 
@@ -72,7 +64,15 @@ const ShoeInfo = () => {
           }
           let cart = cartService.get() || [];
           const shoeinCart = {...shoe, amount: number, size: valueSzie}
-          cart.push(shoeinCart);
+          let check = true;
+          for ( let i = 0; i < cart.length; i++) {
+               if ( cart[i].id==shoeinCart.id && cart[i].size==shoeinCart.size) {
+                    cart[i].amount += shoeinCart.amount;
+                    check = false;
+                    break;
+               }
+          }
+          if ( check) cart.push(shoeinCart);
           cartService.set(cart);
           navigate('/cart')
      }
@@ -91,7 +91,7 @@ const ShoeInfo = () => {
                     </Col>
                     <Col span={12}>
                          <p className='name'>{shoe.name}</p>
-                         <p className='cost'> <b>Giá</b>: {shoe.price}</p>
+                         <p className='cost'> <b>Giá</b>: {formatter.format(shoe.price)}</p>
                          <p className='description'><b>Mô tả</b>: 
                                {shoe.description}
                          </p>
@@ -110,24 +110,23 @@ const ShoeInfo = () => {
                          <Row>
                               <Col className='fix' span={2}>
                                    <div className='border-input-quantity'>
-                                        <Image className="minus" src="/image/minus.png" width={10} preview={false} onClick={handleMinus}/>
+                                        <Image className="minus" src="/image/minus.png" width={15} preview={false} onClick={handleMinus}/>
                                         <Input className="input-quantity" value={number} style={{width: "50px", height: "30px", textAlign:'center', fontSize: '20px'}}/>
-                                        <Image className="plus" src="/image/plus.png" width={10} preview={false} onClick={handlePlus}/>
+                                        <Image className="plus" src="/image/plus.png" width={15} preview={false} onClick={handlePlus}/>
                                    </div>
                               </Col>
                               <Col span={1}></Col>
-                              <Col span={5}>
+                              <Col span={8}>
                                    <div className='add-to-cart' onClick={addToCart}>
                                         <p>Thêm vào giỏ hàng</p>
                                    </div>
-                                   {/* <Button onClick={addToCart} className='add-to-cart'>Thêm vào giỏ hàng</Button> */}
                               </Col>
                               <Col span={1}></Col>
-                              <Col>
+                              {/* <Col>
                                    <div className='buy-now' >
                                         <p>Mua ngay</p>
                                    </div>
-                              </Col>
+                              </Col> */}
                          </Row>
                     </Col>
                </Row>

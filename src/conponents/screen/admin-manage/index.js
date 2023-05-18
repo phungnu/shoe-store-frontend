@@ -10,6 +10,9 @@ import { URL_API } from "../../config/constants";
 import TextArea from "antd/es/input/TextArea";
 import { userService } from "../../service/user";
 
+import {toast} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 const { confirm } = Modal;
 
 const columnsLeft = [
@@ -23,7 +26,7 @@ const columnsLeft = [
 	},
 	{
 		title: 'Ảnh minh họa',
-		dataIndex: 'image',
+		dataIndex: 'imageUrl',
 	},
 	{
 		title: 'Giá sản phẩm',
@@ -43,99 +46,80 @@ const columnsLeft = [
 	},
 ];
 
-const data = [
-	{
-		name: "Nike 1",
-		image: <Image src='/image/shoe11.png' preview={false} width={140} />,
-		price: 1200,
-		quantity: 20,
-		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
-		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
-	},
-	{
-		name: "Nike 1",
-		image: <Image src='/image/shoe12.png' preview={false} width={140} />,
-		price: 1200,
-		quantity: 20,
-		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
-		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
-	},
-	{
-		name: "Nike 1",
-		image: <Image src='/image/shoe13.png' preview={false} width={140} />,
-		price: 1200,
-		quantity: 20,
-		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
-		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
-	},
-	{
-		name: "Nike 1",
-		image: <Image src='/image/shoe14.png' preview={false} width={140} />,
-		price: 1200,
-		quantity: 20,
-		delete: <Tooltip title='Xóa'><Image src = '/image/delete.png' preview = {false} /></Tooltip>,
-		edit: <Tooltip title='Sửa'><Image src = '/image/edit.png' preview = {false} /></Tooltip>
-	},
-]
-
 const AdminManage = () => {
-	const [dataLeft, setDataLeft] = useState(data);
 
-	// const getDataShoe = async () => {
-	// 	await axios.get(`${URL_API}/shoe/getAll`)
-	// 				.then( res => {
-	// 					if ( res.data.statusCode=='OK' ) {
-	// 						let shoes = [];
-	// 						for( let i = 0; i < res.data.data.length; i++ ) {
-	// 							shoes.push ({
-	// 								id: res.data.data[i].id,
-	// 								name : res.data.data[i].name,
-	// 								imageUrl: <Image src={res.data.data[i].imageUrl} preview={false} width={140} />,
-	// 								price: res.data.data[i].price,
-	// 								quantity: res.data.data[i].price,
-	// 								delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(id, name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
-	// 								edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(res.data.data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
-	// 							})
-	// 						}
-	// 						setDataLeft(shoes);
-	// 					}
-	// 				}).catch(err => console.log(err))
-	// }
+	toast.configure()
+	const [dataLeft, setDataLeft] = useState([]);
 
-	// useEffect(() => {
-	// 	getDataShoe()
-	// }, [])
+	const getDataShoe = async () => {
+		await axios.get(`${URL_API}/shoe/getAll`)
+					.then( res => {
+						if ( res.data.statusCode=='OK' ) {
+							let shoes = [];
+							console.log(res.data.data)
+							for( let i = 0; i < res.data.data.length; i++ ) {
+								shoes.push ({
+									id: res.data.data[i].id,
+									name : res.data.data[i].name,
+									imageUrl: <Image src={res.data.data[i].imageUrl} preview={false} width={140} />,
+									price: res.data.data[i].price,
+									quantity: res.data.data[i].price,
+									delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(res.data.data[i].id, res.data.data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
+									edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(res.data.data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
+								})
+							}
+							setDataLeft(shoes);
+						}
+					}).catch(err => console.log(err))
+	}
 
-	const onOpenModalEdit = () => {
+	useEffect(() => {
+		getDataShoe()
+	}, [])
+
+	const onOpenModalEdit = (shoe) => {
 		setModeModal('edit');
-		setNameShoeModal('test name');
-		setPriceShoeModal('200');
-		setNoteModal('test note');
-		setImageUrlModal('/test.png')
-		setQuantityModal(100)
+		setNameShoeModal(shoe.name);
+		setPriceShoeModal(shoe.price);
+		setNoteModal(shoe.note);
+		setImageUrlModal(shoe.imageUrl)
+		setQuantityModal(shoe.quantity)
+		setIdEdit(shoe.id)
 		setOpen(true)
 	}
 
-	const [nameShoeModal, setNameShoeModal] = useState('test name');
+	const [nameShoeModal, setNameShoeModal] = useState('');
 	const [priceShoeModal, setPriceShoeModal] = useState('');
-	const [imageUrlModal, setImageUrlModal] = useState('./test.png');
+	const [imageUrlModal, setImageUrlModal] = useState('');
 	const [noteModal, setNoteModal] = useState('');
 	const [quantityModal, setQuantityModal] = useState('');	
 
+	const clearForm = () => {
+		setNameShoeModal('');
+		setPriceShoeModal('');
+		setImageUrlModal('');
+		setNoteModal('');
+		setQuantityModal('')
+	}
 
-	const editShoe = async (shoe) => {
+	const [idEdit, setIdEdit] = useState();
+
+	const editShoe = async () => {
+		const tmp = imageUrlModal.split('\\');
 		await axios.post(`${URL_API}/shoe/update`,{
-			id: shoe.id,
-			name: shoe.name,
-			price: shoe.price,
-			description: shoe.description,
-			imageUrl: shoe.imageUrl,
-			quantity: shoe.quantity
+			id: idEdit,
+			name: nameShoeModal,
+			price: priceShoeModal,
+			description: noteModal,
+			imageUrl: '/image/'+tmp[tmp.length-1],
+			quantity: quantityModal
 		}). then( res => {
 			if ( res.data.statusCode=='OK' ) {
-				console.log('edit success');
-				// await getDataShoe();
-				
+				toast.success('Sửa giày thành công', {
+					position: toast.POSITION.TOP_CENTER
+				})
+				getDataShoe();
+				clearForm()
 			}
 		}). catch( err => console.log(err))
 		handleClose();
@@ -146,8 +130,10 @@ const AdminManage = () => {
 			id: id
 		}). then( res => {
 			if ( res.data.statusCode=='OK' ) {
-				console.log('delete success');
-				// await getDataShoe();
+				toast.success('Xóa giày thành công', {
+					position: toast.POSITION.TOP_CENTER
+				})
+				getDataShoe();
 			}
 		}). catch( err => console.log(err))
 	}
@@ -216,33 +202,22 @@ const AdminManage = () => {
 
 	const handleAddShoe = async () => {
 		const tmp = imageUrlModal.split('\\');
-
-		await axios.post(`${URL_API}/shoe`, {
+		await axios.post(`${URL_API}/shoe/create`, {
 			name : nameShoeModal,
-			imageUrl: <Image src={`/image/${tmp[tmp.length - 1]}`} preview={false} width={140} />,
+			imageUrl: '/image/'+tmp[tmp.length-1],
 			price: priceShoeModal,
 			quantity: quantityModal,
 			description: noteModal,
 			userId: user.id
 		}). then( res => {
 			if ( res.data.statusCode=='OK' ) {
-				console.log('Add shoe success');
-				// await getDataShoe();
-
+				toast.success('Thêm giày thành công', {
+					position: toast.POSITION.TOP_CENTER
+				})
+				getDataShoe();
+				clearForm()
 			}
 		}). catch( err => console.log(err))
-
-		// const product = {
-		// 	name : nameShoeModal,
-		// 	imageUrl: <Image src={`/image/${tmp[tmp.length - 1]}`} preview={false} width={140} />,
-		// 	price: priceShoeModal,
-		// 	quantity: quantityModal,
-		// 	delete: <Tooltip title='Xóa'><Image className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
-		// 	edit: <Tooltip title='Sửa'><Image className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
-		// }
-
-		// setDataLeft(dataLeft => [...dataLeft, product])
-
         handleClose();
     }
 	const [open, setOpen] = React.useState(false);
@@ -254,6 +229,16 @@ const AdminManage = () => {
     };
 
 	const [modeModal, setModeModal] = useState('add');
+
+	const [isModalOpen, setIsModalOpen ] = useState(false);
+
+	const handleOk = () => {
+		setIsModalOpen(true);
+	}
+
+	const handleCancel = () => {
+		setIsModalOpen(false)
+	}
 
 	return (
 		<div >

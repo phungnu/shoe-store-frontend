@@ -1,6 +1,5 @@
-import { Route, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { userService } from "../service/user";
-import { useNavigate } from "react-router-dom";
 
 const SecuredRoute = ({children}) => {
     console.log(userService.get());
