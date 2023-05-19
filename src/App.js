@@ -19,8 +19,9 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shoe-info" element={<ShoeInfo />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="admin/statistic" element={<Statistic />} />
         <Route path="admin/manage" element={ <SecuredRoute> <AdminManage/> </SecuredRoute> } />
-        <Route path="admin/statistic" element={ <SecuredRoute> <Statistic/> </SecuredRoute> } />
+        {/* <Route path="admin/statistic" element={ <SecuredRoute> <Statistic/> </SecuredRoute> } /> */}
       </Routes>
     </BrowserRouter>
   );

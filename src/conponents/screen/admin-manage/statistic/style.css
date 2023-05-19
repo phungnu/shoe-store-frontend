@@ -6,3 +6,50 @@
     margin-top: 20px;
     margin-bottom: 50px;
 }
+
+.ava-product {
+    width: 200px;
+    height: 170px;
+    border: 5px solid;
+    border-radius: 50%;
+    padding: 15px
+}
+
+.first {
+    border-color: gold;
+    background-color: rgb(245, 243, 130);
+}
+
+.second {
+    border-color: silver;
+    background-color: rgb(233, 233, 233);
+}
+
+.third {
+    border-color: rgba(179, 68, 4, 0.452);
+    background-color: rgba(219, 85, 7, 0.801);
+}
+
+.content-all {
+    margin-bottom: 50px;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.top-second {
+    margin-top: 50px;
+}
+
+.top-third {
+    margin-top: 100px
+}
+
+.title-top {
+    font-size: 16px;
+    font-weight: 600;
+}
