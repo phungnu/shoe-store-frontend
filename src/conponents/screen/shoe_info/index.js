@@ -56,6 +56,8 @@ const ShoeInfo = () => {
      };
 
      const addToCart = () => {
+          if ( shoe.quantity <= 0)
+               return;
           if ( valueSzie=='' ) {
                toast.error('Bạn cần chọn size giày để thêm vào giỏ hàng', {
                     position: toast.POSITION.TOP_CENTER
@@ -92,12 +94,11 @@ const ShoeInfo = () => {
                     <Col span={12}>
                          <p className='name'>{shoe.name}</p>
                          <p className='cost'> <b>Giá</b>: {formatter.format(shoe.price)}</p>
-                         <p className='description'><b>Mô tả</b>: 
+                         <p className='description'><b>Mô tả</b>: <br/>
                                {shoe.description}
                          </p>
                          <p><b>Size</b>: </p>
                          <Radio.Group value={valueSzie} onChange={onSelectSize}>
-                              <Radio.Button value={38}>Size 38</Radio.Button>
                               <Radio.Button value={39}>Size 39</Radio.Button>
                               <Radio.Button value={40}>Size 40</Radio.Button>
                               <Radio.Button value={41}>Size 41</Radio.Button>
@@ -108,17 +109,17 @@ const ShoeInfo = () => {
                          <p><b>Biểu đồ kích cỡ</b></p>
                          <Image src='/image/bang-size-giay.jpg' preview={false} />
                          <Row>
-                              <Col className='fix' span={2}>
+                              <Col className='fix' span={4}>
                                    <div className='border-input-quantity'>
                                         <Image className="minus" src="/image/minus.png" width={15} preview={false} onClick={handleMinus}/>
                                         <Input className="input-quantity" value={number} style={{width: "50px", height: "30px", textAlign:'center', fontSize: '20px'}}/>
                                         <Image className="plus" src="/image/plus.png" width={15} preview={false} onClick={handlePlus}/>
                                    </div>
                               </Col>
-                              <Col span={1}></Col>
+                              <Col span={5}></Col>
                               <Col span={8}>
                                    <div className='add-to-cart' onClick={addToCart}>
-                                        <p>Thêm vào giỏ hàng</p>
+                                        <p>{shoe.quantity > 0 ? 'Thêm vào giỏ hàng' : "Hết hàng"}</p>
                                    </div>
                               </Col>
                               <Col span={1}></Col>

@@ -41,7 +41,7 @@ const Home = () => {
 		<div>
 		<Header page={'home'} />
 
-		<div className="content">
+		<Row className="content-home">
 			{arrayShoe.map((shoe) => (
 				<Col className="gutter-row" sm={24}  md={12} lg={8} xl={6}>
 					<Shoes
@@ -53,7 +53,7 @@ const Home = () => {
 					/>
 				</Col>
 			))}
-		</div>
+		</Row>
 		</div>
 	);
 };

@@ -16,9 +16,13 @@ const ProductInCart = ({id, size, name, quantity, price, url, amount, changeTota
   };
   const handleOk = () => {
     let cart = cartService.get();
-    cart = cart.filter((shoe) => shoe.id !== id || (shoe.id==id && shoe.size!=size));
-    resetCart(cart);
-    cartService.set(cart);
+    let tmp = [];
+    for ( let i = 0; i < cart.length; i++) {
+      if ( cart[i].id !== id && cart[i].size!==size )
+        tmp.push(cart[i]);
+    }
+    resetCart(tmp);
+    cartService.set(tmp);
     changeTotal(total => total - price*amount)
     setIsModalOpen(false);
   };
@@ -28,12 +32,26 @@ const ProductInCart = ({id, size, name, quantity, price, url, amount, changeTota
 
   const handlePlus = () => {
     setNumber(number+1)
+    let cart = cartService.get();
+    for ( let i = 0; i < cart.length; i++) {
+      if ( cart[i].id === id && cart[i].size===size )
+        cart[i].amount += 1
+    }
+    resetCart(cart);
+    cartService.set(cart);
     changeTotal(total => total + price)
   };
 
   const handleMinus = () => {
     if ( number==1 )
       return;
+    let cart = cartService.get();
+    for ( let i = 0; i < cart.length; i++) {
+      if ( cart[i].id == id && cart[i].size==size )
+        cart[i].amount += 1
+    }
+    resetCart(cart);
+    cartService.set(cart);
     setNumber(number-1)
     changeTotal(total => total - price)
   };

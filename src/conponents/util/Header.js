@@ -52,12 +52,12 @@ const Header = ({page}) => {
                          <Image width={50} className='imageLogo' src='/image/logo-nike.png' preview={false}/>
                          <p className='nameLogo'>Nike</p>
                     </Col>
-                    <Col span={11}>
+                    <Col span={12}>
                     </Col>
-                    <Col className='rightHeader' span={8}>
+                    <Col className='rightHeader' span={7}>
                          <p onClick={handleHome} className={styleHome}>HOME</p>
                          <p onClick={handleAbout} className={styleAbount}>ABOUT</p>
-                         <p onClick={handleBills} className={styleBills}>BILLS</p>
+                         {/* <p onClick={handleBills} className={styleBills}>BILLS</p> */}
                          <Image onClick={changeToCart} width={25} className='logoCart' src='/image/logo-cart.png' preview={false}/>
                     </Col>
                </Row>

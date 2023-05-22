@@ -23,7 +23,7 @@ const Shoes = ({id, name, url, price, quantity}) => {
                     </Row>
                     <Row className="fee-quantily" style={{marginTop: '-3%', display: 'flex', justifyContent: 'space-between'}}>
                          <p className='fee'>Price: {formatter.format(price)}</p>
-                         {/* <p className='quantily'> Quantity : {quantity}</p> */}
+                         {quantity <= 0 && <p className='quantily dangerous' >HẾT HÀNG</p>}
                     </Row>
                </div>
           </div>

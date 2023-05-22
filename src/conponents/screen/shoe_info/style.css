@@ -100,5 +100,11 @@
 }
 
 .minus .plus {
-     padding: 5px
+     padding: 5px;
+     padding-left: 10px;
+     padding-right: 10px;
+}
+
+.desciption {
+     font-weight: 100;
 }

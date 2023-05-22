@@ -9,7 +9,7 @@ import axios from "axios";
 import { URL_API } from "../../config/constants";
 import TextArea from "antd/es/input/TextArea";
 import { userService } from "../../service/user";
-
+import { formatter } from "../../service/format";
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
@@ -62,8 +62,8 @@ const AdminManage = () => {
 									id: res.data.data[i].id,
 									name : res.data.data[i].name,
 									imageUrl: <Image src={res.data.data[i].imageUrl} preview={false} width={140} />,
-									price: res.data.data[i].price,
-									quantity: res.data.data[i].price,
+									price: formatter.format(res.data.data[i].price),
+									quantity: res.data.data[i].quantity,
 									delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(res.data.data[i].id, res.data.data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
 									edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(res.data.data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
 								})
@@ -81,7 +81,7 @@ const AdminManage = () => {
 		setModeModal('edit');
 		setNameShoeModal(shoe.name);
 		setPriceShoeModal(shoe.price);
-		setNoteModal(shoe.note);
+		setNoteModal(shoe.description);
 		setImageUrlModal(shoe.imageUrl)
 		setQuantityModal(shoe.quantity)
 		setIdEdit(shoe.id)
@@ -221,12 +221,14 @@ const AdminManage = () => {
         handleClose();
     }
 	const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
+	const handleOpen = () => {
+		setModeModal('add');
+		clearForm();
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	const [modeModal, setModeModal] = useState('add');
 
@@ -272,7 +274,7 @@ const AdminManage = () => {
 									</Row>
 									<Row>
 										<p>Mô tả</p>
-										<TextArea value={noteModal} onChange={(e) => setNoteModal(e.target.value)} placeholder="mô tả" />
+										<TextArea rows={5} value={noteModal} onChange={(e) => setNoteModal(e.target.value)} placeholder="mô tả" />
 									</Row>
 									<Row style={{marginTop: 10}}>
 										<p>Giá sản phẩm</p>
