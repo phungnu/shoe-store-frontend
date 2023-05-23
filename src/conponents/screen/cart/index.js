@@ -41,9 +41,6 @@ const Cart = () => {
 	
 	const [arrayShoes, setArrayShoes] = useState(cart || []);
 
-	useEffect(() => {
-		sum();
-	}, []);
 	const navigate = useNavigate();
 	const handleBack = () => {
 		navigate("/");
@@ -280,10 +277,10 @@ const Cart = () => {
 							<div>
 								<Row>
 									<Col span={1}></Col>
-									<Col span={12}>{shoe.name} - <b>Size: </b> {formatter.format(shoe.size)}</Col>
-									<Col span={3}></Col>
-									<Col span={4}>x {shoe.amount}</Col>
-									<Col span={3}>{formatter.format(shoe.price * shoe.amount)}</Col>
+									<Col span={11}>{shoe.name} - <b>Size: </b> {formatter.format(shoe.size)}</Col>
+									<Col span={2}></Col>
+									<Col span={5}>x {shoe.amount}</Col>
+									<Col span={5}>{formatter.format(shoe.price * shoe.amount)}</Col>
 								</Row>
 								<div className="line-small"></div>
 							</div>
@@ -297,8 +294,8 @@ const Cart = () => {
 					<div className="line-big"></div>
 					<Row>
 						<Col span={1}></Col>
-						<Col className="total-price" span={19}><b>Tổng: </b></Col>
-						<Col className="total-price" span={4}><b>{formatter.format(total + 25000)}</b></Col>
+						<Col className="total-price" span={17}><b>Tổng: </b></Col>
+						<Col className="total-price" span={6}><b>{formatter.format(total + 25000)}</b></Col>
 					</Row>
 					<div className="line-big"></div>
 					<Radio.Group value={valueRadio} onChange={changeRadio}>
@@ -351,17 +348,19 @@ const Cart = () => {
 				) }
 			</div>
 			{arrayShoes.map((shoe) => (
-				<ProductInCart
-					id={shoe.id}
-					name={shoe.name}
-					size={shoe.size}
-					url={shoe.imageUrl}
-					price={shoe.price}
-					quantity={shoe.quantity}
-					amount={shoe.amount}
-					changeTotal={setTotal}
-					resetCart={setArrayShoes}
-				/>
+				<div key={shoe.id}>
+					<ProductInCart
+						id={shoe.id}
+						name={shoe.name}
+						size={shoe.size}
+						url={shoe.imageUrl}
+						price={shoe.price}
+						quantity={shoe.quantity}
+						amount={shoe.amount}
+						changeTotal={setTotal}
+						resetCart={setArrayShoes}
+					/>
+				</div>
 			))}
 
 			<Row className="bottom">
