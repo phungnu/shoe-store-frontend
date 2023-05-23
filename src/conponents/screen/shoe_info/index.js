@@ -17,6 +17,14 @@ const ShoeInfo = () => {
      
      const navigate = useNavigate();
 
+     // const init = {
+     //      name: 'shoe 1',
+     //      imageUrl: '/image/shoe1.png',
+     //      price: 1260000,
+     //      description: '',
+     //      quantity: 100
+     // }
+
      const [shoe, setShoe] = useState({});
 
 	const getDataShoe = async () => {

@@ -37,6 +37,10 @@ const Cart = () => {
 		setTotal(tmp);
 	};
 
+	useEffect(() => {
+		sum()
+	}, [])
+
 	const cart = cartService.get();
 	
 	const [arrayShoes, setArrayShoes] = useState(cart || []);

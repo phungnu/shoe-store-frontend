@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Image, Input, Button, Row, Col, Table, Modal, Tooltip  } from 'antd';
+import { Image, Input, Button, Row, Col, Table, Modal, Tooltip, Upload } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import "./style.css";
 import { useNavigate } from "react-router-dom";
@@ -49,6 +49,42 @@ const columnsLeft = [
 const AdminManage = () => {
 
 	toast.configure()
+
+	// const initData = [
+	// 	{
+	// 		id: 1,
+	// 		name: 'shoe 1',
+	// 		imageUrl: '/image/shoe1.png',
+	// 		price: 1260000,
+	// 		quantity: 100,
+	// 		description: 'day la shoe 1'
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		name: 'shoe 2',
+	// 		imageUrl: '/image/shoe2.png',
+	// 		price: 2260000,
+	// 		quantity: 100,
+	// 		description: 'day la shoe 2'
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		name: 'shoe 3',
+	// 		imageUrl: '/image/shoe3.png',
+	// 		price: 3260000,
+	// 		quantity: 100,
+	// 		description: 'day la shoe 3'
+	// 	},
+	// 	{
+	// 		id: 4,
+	// 		name: 'shoe 4',
+	// 		imageUrl: '/image/shoe4.png',
+	// 		price: 4260000,
+	// 		quantity: 100,
+	// 		description: 'day la shoe 4'
+	// 	}
+	// ]
+
 	const [dataLeft, setDataLeft] = useState([]);
 
 	const getDataShoe = async () => {
@@ -56,22 +92,39 @@ const AdminManage = () => {
 					.then( res => {
 						if ( res.data.statusCode=='OK' ) {
 							let shoes = [];
-							console.log(res.data.data)
-							for( let i = 0; i < res.data.data.length; i++ ) {
+							const data = res.data.data;
+							for( let i = 0; i < data.length; i++ ) {
 								shoes.push ({
-									id: res.data.data[i].id,
-									name : res.data.data[i].name,
-									imageUrl: <Image src={res.data.data[i].imageUrl} preview={false} width={140} />,
-									price: formatter.format(res.data.data[i].price),
-									quantity: res.data.data[i].quantity,
-									delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(res.data.data[i].id, res.data.data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
-									edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(res.data.data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
+									id: data[i].id,
+									name : data[i].name,
+									imageUrl: <Image src={data[i].imageUrl} preview={false} width={140} />,
+									price: formatter.format(data[i].price),
+									quantity: data[i].quantity,
+									delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(data[i].id, data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
+									edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
 								})
 							}
 							setDataLeft(shoes);
 						}
 					}).catch(err => console.log(err))
 	}
+
+	// const temp = () => {
+	// 	let shoes = [];
+	// 	const data = [...initData]
+	// 	for( let i = 0; i < data.length; i++ ) {
+	// 		shoes.push ({
+	// 			id: data[i].id,
+	// 			name : data[i].name,
+	// 			imageUrl: <Image src={data[i].imageUrl} preview={false} width={140} />,
+	// 			price: formatter.format(data[i].price),
+	// 			quantity: data[i].quantity,
+	// 			delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(data[i].id, data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
+	// 			edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
+	// 		})
+	// 	}
+	// 	setDataLeft(shoes);
+	// }
 
 	useEffect(() => {
 		getDataShoe()
@@ -82,7 +135,13 @@ const AdminManage = () => {
 		setNameShoeModal(shoe.name);
 		setPriceShoeModal(shoe.price);
 		setNoteModal(shoe.description);
-		setImageUrlModal(shoe.imageUrl)
+		setImageUrlModal(shoe.imageUrl);
+		setFileList([{
+			uid: '-1',
+			name: 'image-shoe',
+			status: 'done',
+			url: shoe.imageUrl,
+		}])
 		setQuantityModal(shoe.quantity)
 		setIdEdit(shoe.id)
 		setOpen(true)
@@ -99,19 +158,19 @@ const AdminManage = () => {
 		setPriceShoeModal('');
 		setImageUrlModal('');
 		setNoteModal('');
-		setQuantityModal('')
+		setQuantityModal('');
+		setFileList([])
 	}
 
 	const [idEdit, setIdEdit] = useState();
 
 	const editShoe = async () => {
-		const tmp = imageUrlModal.split('\\');
 		await axios.post(`${URL_API}/shoe/update`,{
 			id: idEdit,
 			name: nameShoeModal,
 			price: priceShoeModal,
 			description: noteModal,
-			imageUrl: '/image/'+tmp[tmp.length-1],
+			imageUrl: fileList[0].url,
 			quantity: quantityModal
 		}). then( res => {
 			if ( res.data.statusCode=='OK' ) {
@@ -201,10 +260,9 @@ const AdminManage = () => {
 	const user = userService.get();
 
 	const handleAddShoe = async () => {
-		const tmp = imageUrlModal.split('\\');
 		await axios.post(`${URL_API}/shoe/create`, {
 			name : nameShoeModal,
-			imageUrl: '/image/'+tmp[tmp.length-1],
+			imageUrl: fileList[0].url,
 			price: priceShoeModal,
 			quantity: quantityModal,
 			description: noteModal,
@@ -242,6 +300,21 @@ const AdminManage = () => {
 		setIsModalOpen(false)
 	}
 
+	const [fileList, setFileList] = useState([]);
+
+	const onChange = ({ fileList: newFileList }) => {
+		if ( newFileList.length > 0 )
+			setFileList([{
+				uid: '-1',
+				name: 'image-shoe',
+				status: 'done',
+				url: `/image/${newFileList[0].name}`,
+			}]);
+		else 
+			setFileList(newFileList)
+		console.log(newFileList);
+	};
+
 	return (
 		<div >
 		<Row>
@@ -268,10 +341,19 @@ const AdminManage = () => {
 										<p>Tên sản phẩm</p>
 										<Input value={nameShoeModal} onChange={(e) => setNameShoeModal(e.target.value)}  placeholder="Nhập tên sản phẩm" />
 									</Row>
-									<Row>
-										<p>Ảnh minh họa</p>
-										<Input type="file" onChange={(e) => setImageUrlModal(e.target.value)}  placeholder="Chọn ảnh" />
-									</Row>
+									<p>Ảnh minh họa</p>
+									{/* <Input type="file" onChange={(e) => setImageUrlModal(e.target.value)}  placeholder="Chọn ảnh" />
+										*/}
+									<Upload
+										action="//jsonplaceholder.typicode.com/posts/"
+										listType="picture"
+										fileList={fileList}
+										onChange={onChange}
+										previewFile={false}
+										width={100}
+									>
+										{fileList.length < 1 && <Button>+ Upload</Button>}
+									</Upload>
 									<Row>
 										<p>Mô tả</p>
 										<TextArea rows={5} value={noteModal} onChange={(e) => setNoteModal(e.target.value)} placeholder="mô tả" />
