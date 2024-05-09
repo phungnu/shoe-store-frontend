@@ -9,6 +9,15 @@ import "./style.css";
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
+
+import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+
 
 const Home = () => {
 	const [arrayShoe, setArrayShoes] = useState([]);
@@ -91,6 +100,49 @@ const Home = () => {
 					</Col>
 				))}
 			</Row>
+
+			<Swiper
+				slidesPerView={4}
+				spaceBetween={50}
+				navigation={true}
+				pagination={{
+					clickable: true,
+				}}
+				keyboard={true}
+				modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+				className="mySwiper"
+			>
+				<SwiperSlide>
+					<div className="feedback-ctn">
+						<Image className="feedback-img" src="/image/feedback1.jpeg" preview={false}/>
+						<div className="feedback-text">Tôi đã mua cho cả 2 vợ chồng giày của Myshoes.vn và thật sự nó vô cùng chất lượng. Hàng đảm bảo chính hãng 100% và chính sách bảo hành rất yên tâm ạ. Cảm ơn Myshoes.vn!</div>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="feedback-ctn">
+						<Image className="feedback-img" src="/image/feedback2.jpg" preview={false}/>
+						<div className="feedback-text">Myshoes.vn bán hàng chính hãng, giá rất ok, tôi đã mua một đôi giày chạy bộ của Nike đi rất êm và thích.</div>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="feedback-ctn">
+						<Image className="feedback-img" src="/image/feedback3.jpg" preview={false}/>
+						<div className="feedback-text">Tìm một đôi giày ưng ý không hề dễ dàng, nhưng từ khi biết đến Myshoes.vn thì hoàn toàn tin tưởng, nhiều mẫu đẹp và đã chọn được một em Adidas ưng ý!</div>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="feedback-ctn">
+						<Image className="feedback-img" src="/image/feedback4.jpg" preview={false}/>
+						<div className="feedback-text">Mới mua combo chăm sóc giày của Myshoes sử dụng rất tốt, vệ sinh giày siêu sạch, xịt nano rất hiệu quả khi đi trời mưa.</div>
+					</div>
+				</SwiperSlide>
+				<SwiperSlide>
+					<div className="feedback-ctn">
+						<Image className="feedback-img" src="/image/feedback5.jpg" preview={false}/>
+						<div className="feedback-text">Tôi đã mua cho cả 2 vợ chồng giày của Myshoes.vn và thật sự nó vô cùng chất lượng. Hàng đảm bảo chính hãng 100% và chính sách bảo hành rất yên tâm ạ. Cảm ơn Myshoes.vn!</div>
+					</div>
+				</SwiperSlide>
+			</Swiper>
 		</div>
 	);
 };

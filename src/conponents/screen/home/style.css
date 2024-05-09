@@ -40,3 +40,42 @@
      width: 30px !important;
      margin-bottom: 5px !important;
 }
+
+
+.swiper {
+     width: 100%;
+     height: 100%;
+}
+ 
+.swiper-wrapper {
+     margin-bottom: 40px !important;
+     padding: 40px 40px;
+}
+
+.swiper-slide {
+     text-align: center;
+     font-size: 18px;
+     background: #fff;
+
+     /* Center slide text vertically */
+     display: flex;
+     justify-content: center;
+     align-items: center;
+}
+
+.swiper-slide img {
+     display: block;
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+}
+
+.feedback-ctn {
+     padding: 25px 20px;
+     background-color: rgba(240, 242, 245, 1);
+     min-height: 600px;
+}
+
+.feedback-img {
+     margin-bottom: 30px;
+}

@@ -9,6 +9,7 @@ import Admin from './conponents/screen/admin-login/index';
 import AdminManage from './conponents/screen/admin-manage/index';
 import Statistic from './conponents/screen/admin-manage/statistic/index';
 import SecuredRoute from './conponents/util/SecuredRoute';
+import Footer from './conponents/screen/footer';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="admin/manage" element={ <SecuredRoute> <AdminManage/> </SecuredRoute> } />
         <Route path="admin/statistic" element={ <SecuredRoute> <Statistic/> </SecuredRoute> } />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
