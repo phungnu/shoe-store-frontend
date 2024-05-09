@@ -58,7 +58,7 @@ const Cart = () => {
 	const [district, setDistrict] = useState('--Chọn quận/huyện--');
 	const [ward, setWard] = useState('--Chọn thị trấn/xã--');
 
-	const host = "https://provinces.open-api.vn/api/";
+	const host = "http://localhost:3008/cities";
 	
 	var callAPI = (api) => {
 		return axios.get(api)
@@ -70,13 +70,13 @@ const Cart = () => {
 	var callApiDistrict = (api) => {
 		return axios.get(api)
 			.then((response) => {
-				renderData(response.data.districts, "district");
+				renderData(response.data, "district");
 			});
 	}
 	var callApiWard = (api) => {
 		return axios.get(api)
 			.then((response) => {
-				renderData(response.data.wards, "ward");
+				renderData(response.data, "ward");
 			});
 	}
 	
@@ -99,13 +99,20 @@ const Cart = () => {
 
 	const handleChooseCity = (option) => {
 		setCity(option.label);
-		callAPI('https://provinces.open-api.vn/api/?depth=1');
-		callApiDistrict(host + "p/" + option.value + "?depth=2");
+		renderData([], 'district');
+		renderData([], 'ward');
+		setDistrict('--Chọn quận/huyện--');
+		setWard('--Chọn thị trấn/xã--');
+		callApiDistrict(`${host}/${option.value}/districts`);
+		// callApiDistrict(host + "p/" + option.value + "?depth=2");
 	}
 
 	const handleChooseDistrict = (option) => {
+		renderData([], 'ward');
+		setWard('--Chọn thị trấn/xã--');
 		setDistrict(option.label);
-		callApiWard(host + "d/" + option.value + "?depth=2");
+		callApiWard(`${host}/districts/${option.value}/communes`);
+		// callApiWard(host + "d/" + option.value + "?depth=2");
 	}
 
 	const handleChooseWard = (option) => {
@@ -145,7 +152,7 @@ const Cart = () => {
 				email: email
 			},
 			shoeBills: shoeBills
-		}). then( res => {
+		}).then( res => {
 			if ( res.data.statusCode=='OK' ) {
 				cartService.set([]);
 				setArrayShoes([]);
