@@ -1,8 +1,11 @@
 .header {
-     padding-top: 8px;
+     padding-top: 20px;
+     padding-bottom: 20px;
      /* width: 100%; */
      padding-left: 10%;
      box-shadow: 0px 0px 8px 2px #000000;
+     background: rgba(10, 67, 127, 1)
+
 }
 
 .imageLogo {
@@ -58,4 +61,63 @@
 
 .logoCart:hover {
 cursor: pointer;
+}
+
+.content-modal-login{
+     padding-top: 10px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+}
+
+.title-login {
+     margin-bottom: 25px;
+     font-size: 16px;
+     font-weight: 400;
+}
+
+.input-username{
+     margin-bottom: 15px;
+}
+
+.input-pass{
+     margin-bottom: 30px;
+}
+
+.btn-login{
+     width: 100%;
+     background: rgba(15, 58, 141, 1);
+     color: #fff;
+     font-weight: bold;
+}
+
+
+.content-modal-signup{
+     padding-top: 10px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+}
+
+.title-signup {
+     margin-bottom: 25px;
+     font-size: 16px;
+     font-weight: 400;
+}
+
+.input-username1, .input-phone, .input-pass1, .input-address{
+     margin-bottom: 15px;
+}
+
+.input-confirm-pass{
+     margin-bottom: 30px;
+}
+
+.btn-signup{
+     width: 100%;
+     background: rgba(15, 58, 141, 1);
+     color: #fff;
+     font-weight: bold;
 }
