@@ -79,3 +79,30 @@
 .feedback-img {
      margin-bottom: 30px;
 }
+
+.title-wrapper{
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     margin-top: 20px;
+}
+
+.main-title{
+     font-size: 22px;
+     font-weight: bold;
+     color: rgba(58, 71, 84, 1);
+}
+
+.hightlight-line{
+     display: block;
+     width: 50px;
+     height: 4px;
+     background-color: rgba(226, 41, 61, 1);
+     margin-top: 10px;
+     margin-bottom: 10px;
+}
+
+.mySwiper{
+     padding-right: 75px !important;
+}

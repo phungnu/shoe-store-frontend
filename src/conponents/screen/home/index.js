@@ -87,6 +87,13 @@ const Home = () => {
 					</Row>
 				</div>
 			</div>
+			<div className="title-wrapper">
+				<div className="main-title">
+					SẢN PHẨM MỚI
+				</div>
+				<div className="hightlight-line"></div>
+				<div className="sub-title">#NEW</div>
+			</div>
 			<Row className="content-home">
 				{arrayShoe.map((shoe) => (
 					<Col className="gutter-row" sm={24} md={12} lg={8} xl={6}>
@@ -100,7 +107,13 @@ const Home = () => {
 					</Col>
 				))}
 			</Row>
-
+			<div className="title-wrapper">
+				<div className="main-title">
+					KHÁCH HÀNG NÓI VỀ MYSHOES.VN
+				</div>
+				<div className="hightlight-line"></div>
+				<div className="sub-title">#FEEDBACK</div>
+			</div>
 			<Swiper
 				slidesPerView={4}
 				spaceBetween={50}
