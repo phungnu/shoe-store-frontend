@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-
+import { ShoppingCartOutlined } from '@ant-design/icons';
 import { loginAPI, registerAPI } from '../service/apis';
 
 const { Search } = Input;
@@ -126,16 +126,14 @@ const Header = ({page}) => {
                          <Search placeholder="Tìm kiếm sản phẩm..." style={{ width: 500, height:33 }} />
                     </Col>
                     <Col className='rightHeader' span={6}>
-                         <p onClick={handleHome} className={styleHome}>HOME</p>
-                         <p onClick={handleAbout} className={styleAbount}>ABOUT</p>
-                         <Image onClick={changeToCart} width={25} className='logoCart' src='/image/logo-cart.png' preview={false}/>
-                         <a onClick={showModal}>
-                           Đăng nhập   
-                         </a>
-                         /
-                         <a onClick={showModalSignup}>
-                              Đăng ký
-                         </a>
+                         {/* <p onClick={handleHome} className={styleHome}>HOME</p> */}
+                         {/* <p onClick={handleAbout} className={styleAbount}>ABOUT</p> */}
+                         <div>
+                              <ShoppingCartOutlined onClick={changeToCart} className='logoCart' />
+                              {/* <Image onClick={changeToCart} width={25} className='logoCart' src='/image/logo-cart.png' preview={false}/> */}
+                              <a onClick={showModal}>Đăng nhập</a> / <a onClick={showModalSignup}>Đăng ký</a>
+                         </div>
+                         
                     </Col>
                </Row>
 

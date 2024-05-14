@@ -25,16 +25,17 @@
 .rightHeader {
      display: flex;
      align-items: center;
+     color: #fff;
 }
 
 .home {
      margin-right: 10px;
-     color: #000000;
+     color: #fff;
 }
 
 .about {
      margin-right: 10px;
-     color: #000000;
+     color: #fff;
 }
 
 .bills {
@@ -59,8 +60,14 @@
      cursor: pointer;
 }
 
+
+.logoCart {
+     font-size: 30px;
+     width: 80px;
+}
+
 .logoCart:hover {
-cursor: pointer;
+     cursor: pointer;
 }
 
 .content-modal-login{
