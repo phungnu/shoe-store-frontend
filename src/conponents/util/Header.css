@@ -10,6 +10,7 @@
 
 .imageLogo {
      margin-right: 10px;
+     cursor: pointer;
 }
 
 .leftHeader {
@@ -63,7 +64,8 @@
 
 .logoCart {
      font-size: 30px;
-     width: 80px;
+     /* width: 80px; */
+     margin-right: 10px;
 }
 
 .logoCart:hover {
@@ -114,7 +116,7 @@
      font-weight: 400;
 }
 
-.input-username1, .input-phone, .input-pass1, .input-address{
+.input-username1, .input-phone, .input-pass1, .input-address, .input-name{
      margin-bottom: 15px;
 }
 
@@ -132,4 +134,13 @@
 .user-info-container {
      justify-content: center;
      align-items: center;
+}
+
+.user-info {
+     margin-right: 10px;
+     cursor: pointer;
+}
+
+.btn-logout {
+     cursor: pointer;
 }

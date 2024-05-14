@@ -1,4 +1,4 @@
-import { Row, Col, Button, Modal, Input, Select, Image, Steps, Radio } from "antd";
+import { Row, Col, Button, Modal, Input, Select, Image, Steps, Radio, message } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,10 +7,11 @@ import Header from "../../util/Header";
 import ProductInCart from "../../util/ProductInCart";
 import "./style.css";
 import { URL_API } from "../../config/constants";
-import { cartService } from "../../service/cart";
+import { userService } from "../../service/user";
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { formatter } from "../../service/format";
+import { createBillAPI, getShoeByUserAPI } from "../../service/apis";
 
 const Cart = () => {
 
@@ -20,6 +21,7 @@ const Cart = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const showModal = () => {
+		sum();
 		setFirst(false);
 		setIsModalOpen(true);
 		callAPI(host);
@@ -37,14 +39,48 @@ const Cart = () => {
 		setTotal(tmp);
 	};
 
-	useEffect(() => {
-		sum()
-	}, [])
-
-	const cart = cartService.get();
 	
-	const [arrayShoes, setArrayShoes] = useState(cart || []);
 
+	const user = userService.get();
+
+	const [arrayShoes, setArrayShoes] = useState([]);
+
+	const getShoeByUser = async () => {
+		if ( !user )
+			return;
+		var payload = {
+			id: user.id
+		}
+		await getShoeByUserAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode == 'OK' ) {
+					let data = res.data.data;
+					var shoeList = [];
+					for ( var i = 0; i < data.length; i++) {
+						if ( data.bill != null )
+							continue;
+						var shoeItem = {
+							id: data[i].id,
+							amount: data[i].amount,
+							size: data[i].size,
+							imageUrl : data[i].shoe.imageUrl,
+							price : data[i].shoe.price,
+							description : data[i].shoe.description,
+							name : data[i].shoe.name,
+						}
+						shoeList.push(shoeItem);
+					}
+					console.log(shoeList);
+					setArrayShoes(shoeList);
+				}
+			})
+			.catch(err => console.log(err))
+	}
+
+	useEffect(() => {
+		getShoeByUser();
+	}, [])
+	
 	const navigate = useNavigate();
 	const handleBack = () => {
 		navigate("/");
@@ -119,9 +155,8 @@ const Cart = () => {
 		setWard(option.label);
 	}
 
-	const [fName, setFName] = useState('');
-	const [lName, setLName] = useState('');
-	const [phone, setPhone] = useState('')
+	const [fName, setFName] = useState(user.name || '');
+	const [phone, setPhone] = useState(user.phone || '')
 	const [address, setAddress] = useState('')
 	const [homeNumber, setHomeNumber] = useState('')
 	const [note, setNote] = useState('')
@@ -136,31 +171,24 @@ const Cart = () => {
 	const onBuy = async () => {
 		let shoeBills = [];
 		arrayShoes.forEach(shoe => {
-			const tmp = {
-				size: shoe.size,
-				amount: shoe.amount,
-				shoeId: shoe.id
-			}
-			shoeBills.push(tmp)
+			shoeBills.push(shoe.id)
 		});
-		await axios.post(`${URL_API}/bill`, {
+		var payload = {
+			shoeBills: shoeBills,
 			address: address,
 			message: note,
-			customerInfo: {
-				fullName: fName + ' ' + lName,
-				phone: phone,
-				email: email
-			},
-			shoeBills: shoeBills
-		}).then( res => {
-			if ( res.data.statusCode=='OK' ) {
-				cartService.set([]);
-				setArrayShoes([]);
-				toast.success('Đặt hàng thành công', {
-					position: toast.POSITION.TOP_CENTER
-				})
-			}
-		}). catch( err => console.log(err))
+			userId: user.id
+		}
+		await createBillAPI(payload)
+			.then( res => {
+				if ( res.data.statusCode=='OK' ) {
+					getShoeByUser();
+					toast.success('ĐẶT HÀNG THÀNH CÔNG', {
+						position: toast.POSITION.TOP_CENTER
+					})
+				}
+			})
+			.catch( err => console.log(err))
 		hideModal();
 	}
 
@@ -175,7 +203,7 @@ const Cart = () => {
 			return null;
 		let check = true;
 		var regexPhone = /^0\d{9}$/;
-		if ( fName=='' || lName=='') {
+		if ( fName=='') {
 			setErrorName('Họ tên không được để trống');
 			check = false;
 		} else {
@@ -210,7 +238,6 @@ const Cart = () => {
 				</p>
 				<Row className="name-custmmer">
 					<Input value={fName} onChange={(e) => setFName(e.target.value)} className="first-name" placeholder="Họ" />
-					<Input value={lName} onChange={(e) => setLName(e.target.value)} className="last-name" placeholder="Tên" />
 				</Row>
 				<p>
 					Email (tùy chọn)
@@ -269,7 +296,7 @@ const Cart = () => {
 			content: <div className="confirm-modal">
 				<Col className="info-customer" span={11}>
 					<h3 className="title-info">Thông tin khách hàng</h3>
-					<p><b>Họ tên:</b> {fName + ' ' + lName}</p>
+					<p><b>Họ tên:</b> {fName}</p>
 					<p><b>Email:</b> {email}</p>
 					<p><b>Số điện thoại:</b> {phone}</p>
 					<p><b>Địa chỉ:</b> {address}</p>
@@ -322,7 +349,7 @@ const Cart = () => {
 
 	useEffect(() => {
 		validateForm()
-	}, [phone, lName, fName, city, district, ward, homeNumber])
+	}, [phone, fName, city, district, ward, homeNumber])
 
 	const [current, setCurrent] = useState(0);
 	const next = () => {
@@ -368,7 +395,7 @@ const Cart = () => {
 						quantity={shoe.quantity}
 						amount={shoe.amount}
 						changeTotal={setTotal}
-						resetCart={setArrayShoes}
+						resetCart={getShoeByUser}
 					/>
 				</div>
 			))}

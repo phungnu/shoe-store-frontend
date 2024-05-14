@@ -3,7 +3,7 @@
      margin-right: 10%;
      /* display: flex; */
      /* flex-direction: row; */
-     margin-bottom: 20px;
+     margin-bottom: 50px;
 }
 
 .intro-image{
@@ -73,7 +73,7 @@
 .feedback-ctn {
      padding: 25px 20px;
      background-color: rgba(240, 242, 245, 1);
-     min-height: 600px;
+     min-height: 550px;
 }
 
 .feedback-img {

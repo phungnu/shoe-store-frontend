@@ -1,7 +1,6 @@
 import React, { useEffect, useState} from "react";
 import { Image, Input, Button, Row, Col, Table, Modal, Tooltip, List, Avatar  } from 'antd';
 import "./style.css";
-import { useNavigate } from "react-router-dom";
 import Toolbar from "../Toolbar";
 import {
 	Chart as ChartJS,
@@ -15,6 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import { URL_API } from "../../../config/constants"
 import axios from "axios";
 import { formatter } from "../../../service/format";
+import { updateStatusBillAPI } from "../../../service/apis";
 
 ChartJS.register(
 	CategoryScale,
@@ -30,6 +30,10 @@ const column = [
 		dataIndex: 'id'
 	},
 	{
+		title: "Khách hàng",
+		dataIndex: 'customer',
+	},
+	{
 		title: 'Thời gian',
 		dataIndex: 'createAt',
 	},
@@ -38,7 +42,11 @@ const column = [
 		dataIndex: 'money',
 	},
 	{
-		title: '',
+		title: "Trạng thái",
+		dataIndex: "statusText"	
+	},
+	{
+		title: 'Action',
 		dataIndex: 'actionView',
 	},
 ]
@@ -92,9 +100,8 @@ const Statistic = () => {
 
 	const initBillSelected = {
 		id: 0,
-		customer: {
-			fullName: '',
-			email: '',
+		user: {
+			name: '',
 			phone: ''
 		},
 		message: '',
@@ -113,6 +120,20 @@ const Statistic = () => {
 		]
 	}
 
+	const formatTime = (isoString) => {
+		const date = new Date(isoString);
+
+		const day = String(date.getUTCDate()).padStart(2, '0');
+		const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+		const year = date.getUTCFullYear();
+		const hours = String(date.getUTCHours()).padStart(2, '0');
+		const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+		const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+
+		return formattedDate;
+	}
+
 	const [billSelected, setBillSelected] = useState(initBillSelected);
 	const [moneyBill, setMoneyBill] = useState();
 
@@ -126,15 +147,58 @@ const Statistic = () => {
 		setOpen(false)
 	}
 
+	const convertStatusBill = (status) => {
+		var statusText = ""
+		if ( status == 0 ) {
+			statusText = "Đang chờ xử lý";
+		} else if ( status == 1){
+			statusText = "Đã xác nhận";
+		} else if ( status == 2) {
+			statusText = "Đã hủy";
+		}
+		return statusText;
+	}
+
+	const [data, setData] = useState(initDataRank);
+
+	const [dataBill, setDataBill] = useState([]);
+
+	const acceptBill = (bill) => {
+		updateStatusBill(bill, 'accept');
+	}
+
+	const cancelBill = (bill) => {
+		updateStatusBill(bill, 'cancel');
+	}
+
+	const updateStatusBill = async (bill, action) => {
+		var payload = {
+			id: bill.id,
+			status: action == 'accept' ? 1 : 2
+		}
+		await updateStatusBillAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode == 'OK') {
+					getDataBill();
+					getDataShoeWithBill();
+				}
+			})
+			.catch(err => console.log(err))
+	}
+
 	const getDataBill = async () => {
+		setChartData(JSON.parse(JSON.stringify(templateData)));
 		await axios.get(`${URL_API}/bill/getAll`)
 			.then(res => {
 				if ( res.data.statusCode=='OK' ) {
 					const listBill = res.data.data;
-					console.log(listBill)
-					let tmp = {...templateData}
+					let tmp = JSON.parse(JSON.stringify(templateData));
 					let tmp2 = [];
 					for (let i = 0; i < listBill.length; i++) {
+						const month = (new Date(listBill[i].createAt)).getMonth();
+						listBill[i].createAt = formatTime(listBill[i].createAt);
+						listBill[i].customer = listBill[i].user.name;
+						listBill[i].statusText = convertStatusBill(listBill[i].status);
 						let total = 0;
 						for ( let j = 0; j < listBill[i].shoebills.length; j++) {
 							total += listBill[i].shoebills[j].shoe.price * listBill[i].shoebills[j].amount;
@@ -142,10 +206,15 @@ const Statistic = () => {
 						tmp2.push({
 							...listBill[i],
 							money: total,
-							actionView: <Button onClick={() => viewBill(listBill[i], total)}>View</Button>
+							actionView: <Row>
+								<Button className="btn-view-bill" onClick={() => viewBill(listBill[i], total)}>View</Button>
+								{listBill[i].status == 0 ? <Row><Button onClick={() => acceptBill(listBill[i])} className="btn-accept-bill">Accept</Button> <Button onClick={() => cancelBill(listBill[i])} className="btn-cancel-bill">Cancel</Button></Row> : <></> }
+							</Row>
 						})
-						const month = (new Date(listBill[i].createAt)).getMonth();
-						tmp.datasets[0].data[month] += total;
+						console.log(listBill[i]);
+						if ( listBill[i].status == 1) {
+							tmp.datasets[0].data[month] += total;
+						}
 					}
 					setDataBill(tmp2);
 					setChartData(tmp);
@@ -154,17 +223,13 @@ const Statistic = () => {
 			.catch(err => console.log(err))
 	}
 
-	const [data, setData] = useState(initDataRank);
-
-	const [dataBill, setDataBill] = useState([]);
-
 	const getDataShoeWithBill = async () => {
+		
 		await axios.get(`${URL_API}/shoe/getAllWithShoeBill`)
 			.then(async (res) => {
 				if ( res.data.statusCode=='OK' ) {
 					let tmp = [];
 					const listShoe = res.data.data;
-					console.log(listShoe)
 					for ( let i = 0; i < listShoe.length; i++) {
 						let sold = 0;
 						for ( let j = 0; j < listShoe[i].shoebills.length; j++) {
@@ -178,17 +243,17 @@ const Statistic = () => {
 						})
 					}
 					await tmp.sort((a,b) => { return b.sold - a.sold });
-					
 					setData(tmp);
 				}
 			})	
 			.catch(err => console.log(err))
 	}
 
+
 	useEffect(() => {
-		getDataBill()
-		getDataShoeWithBill()
-	},[])
+		getDataBill();
+		getDataShoeWithBill();
+	}, []);
 	
 	return (
 		<div className="content-all">
@@ -257,9 +322,8 @@ const Statistic = () => {
 				<div className="view-bill">
 					<Col className="info-customer" span={11}>
 						<h3 className="title-info">Thông tin khách hàng</h3>
-						<p><b>Họ tên:</b> {billSelected.customer.fullName}</p>
-						<p><b>Email:</b> {billSelected.customer.email}</p>
-						<p><b>Số điện thoại:</b> {billSelected.customer.phone}</p>
+						<p><b>Họ tên:</b> {billSelected.user.name}</p>
+						<p><b>Số điện thoại:</b> {billSelected.user.phone}</p>
 						<p><b>Địa chỉ:</b> {billSelected.address}</p>
 						<p><b>Lời nhắn:</b> {billSelected.message}</p>
 					</Col>
@@ -276,7 +340,7 @@ const Statistic = () => {
 								<div>
 									<Row>
 										<Col span={1}></Col>
-										<Col span={12}>{shoebill.shoe.name} - <b>Size: </b> {formatter.format(shoebill.size)}</Col>
+										<Col span={12}>{shoebill.shoe.name} - <b>Size: </b> {shoebill.size}</Col>
 										<Col span={3}></Col>
 										<Col span={2}>x {shoebill.amount}</Col>
 										<Col style={{marginLeft:15}} span={5}>{formatter.format(shoebill.shoe.price * shoebill.amount)}</Col>

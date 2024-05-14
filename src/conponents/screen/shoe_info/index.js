@@ -9,9 +9,15 @@ import { cartService } from '../../service/cart';
 import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { formatter } from '../../service/format';
+
+import { addToCartAPI } from '../../service/apis';
+import { userService } from '../../service/user';
+
 const ShoeInfo = () => {
 
      const [searchParams] = useSearchParams();
+
+     const user = userService.get();
 
      toast.configure();
      
@@ -63,7 +69,7 @@ const ShoeInfo = () => {
           setNumber((number-1) > 0 ? number-1 : 1)
      };
 
-     const addToCart = () => {
+     const addToCart = async () => {
           if ( shoe.quantity <= 0)
                return;
           if ( valueSzie=='' ) {
@@ -72,19 +78,37 @@ const ShoeInfo = () => {
                })
                return;
           }
-          let cart = cartService.get() || [];
-          const shoeinCart = {...shoe, amount: number, size: valueSzie}
-          let check = true;
-          for ( let i = 0; i < cart.length; i++) {
-               if ( cart[i].id==shoeinCart.id && cart[i].size==shoeinCart.size) {
-                    cart[i].amount += shoeinCart.amount;
-                    check = false;
-                    break;
-               }
+          // let cart = cartService.get() || [];
+          // const shoeinCart = {...shoe, amount: number, size: valueSzie}
+          // let check = true;
+          // for ( let i = 0; i < cart.length; i++) {
+          //      if ( cart[i].id==shoeinCart.id && cart[i].size==shoeinCart.size) {
+          //           cart[i].amount += shoeinCart.amount;
+          //           check = false;
+          //           break;
+          //      }
+          // }
+          // if ( check) cart.push(shoeinCart);
+          // cartService.set(cart);
+          
+          var payload = {
+               amount: number,
+               size: valueSzie,
+               userId: user.id,
+               shoeId: shoe.id
           }
-          if ( check) cart.push(shoeinCart);
-          cartService.set(cart);
-          navigate('/cart')
+          console.log(payload);
+          await addToCartAPI(payload)
+               .then(res => {
+                    if ( res.data.statusCode=='OK' ){
+                         toast.success('Thêm vào giỏ hàng thành công', {
+                              position: toast.POSITION.TOP_CENTER
+                         })
+                         navigate('/cart')
+                    }
+               })	
+               .catch(err => console.log(err))
+          
      }
 
      const [valueSzie, setValueSize] = useState('');
@@ -94,7 +118,6 @@ const ShoeInfo = () => {
       
      return (
           <div className='shoe'>
-               <Header page={"shoe-info"} />
                <Row className='content-shoe-info' >
                     <Col className='shoe-image' span={10}>
                          <Image className='image-shoe' src={shoe.imageUrl} preview={false} />

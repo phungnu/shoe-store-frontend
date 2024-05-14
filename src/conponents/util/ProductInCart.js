@@ -1,11 +1,13 @@
 import { Row, Col, Image, Input, Modal } from "antd";
 import "./ProductInCart.css";
 import { useEffect, useState } from 'react'
-import { cartService } from "../service/cart";
 import { formatter } from "../service/format";
 
+import { changeAmountInCartAPI, removeFromCartAPI } from "../service/apis";
+import {toast} from 'react-toastify';
 
 const ProductInCart = ({id, size, name, quantity, price, url, amount, changeTotal, resetCart}) => {
+	toast.configure();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [number, setNumber] = useState(amount);
@@ -14,43 +16,53 @@ const ProductInCart = ({id, size, name, quantity, price, url, amount, changeTota
 		setIsModalOpen(true);
 	};
 
-	const handleOk = () => {
-		let cart = cartService.get();
-		cart = cart.filter((shoe) => shoe.id !== id || (shoe.id==id && shoe.size!=size))
-		resetCart(cart);
-		cartService.set(cart);
-		changeTotal(total => total - price*amount)
-		setIsModalOpen(false);
+	const handleOk = async () => {
+		var payload = {id: id};
+		await removeFromCartAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode=='OK' ){
+					changeTotal(total => total - price*amount)
+					setIsModalOpen(false);
+					resetCart();
+					toast.success('XÓA GIÀY THÀNH CÔNG', {
+						position: toast.POSITION.TOP_CENTER
+				   });
+				}
+			})
+		// changeTotal(total => total - price*amount)
+		// setIsModalOpen(false);
 	};
 
 	const handleCancel = () => {
 		setIsModalOpen(false);
 	};
 
-	const handlePlus = () => {
-		setNumber(number+1)
-		let cart = cartService.get();
-		for ( let i = 0; i < cart.length; i++) {
-		if ( cart[i].id === id && cart[i].size===size )
-			cart[i].amount += 1
-		}
-		resetCart(cart);
-		cartService.set(cart);
-		changeTotal(total => total + price)
+	const handlePlus = async () => {
+		var payload = {id: id, action: "plus"};
+		await changeAmountInCartAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode=='OK' ){
+					changeTotal(total => total + price)
+					resetCart();
+					setNumber(number => number + 1);
+				}
+			})
 	};
 
-	const handleMinus = () => {
+	const handleMinus = async () => {
+		console.log(number);
 		if ( number==1 )
-		return;
-		let cart = cartService.get();
-		for ( let i = 0; i < cart.length; i++) {
-		if ( cart[i].id == id && cart[i].size==size )
-			cart[i].amount -= 1
-		}
-		resetCart(cart);
-		cartService.set(cart);
-		setNumber(number-1)
-		changeTotal(total => total - price)
+			return;
+		
+		var payload = {id: id, action: "minus"};
+		await changeAmountInCartAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode=='OK' ){
+					changeTotal(total => total - price)
+					resetCart();
+					setNumber(number => number - 1);
+				}
+			})
 	};
 
 	return (

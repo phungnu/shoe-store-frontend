@@ -172,7 +172,7 @@ const AdminManage = () => {
 			description: noteModal,
 			imageUrl: fileList[0].url,
 			quantity: quantityModal
-		}). then( res => {
+		}).then( res => {
 			if ( res.data.statusCode=='OK' ) {
 				toast.success('Sửa giày thành công', {
 					position: toast.POSITION.TOP_CENTER
@@ -180,21 +180,21 @@ const AdminManage = () => {
 				getDataShoe();
 				clearForm()
 			}
-		}). catch( err => console.log(err))
+		}).catch( err => console.log(err))
 		handleClose();
 	}
 
 	const delShoe = async (id) => {
 		await axios.post(`${URL_API}/shoe/delete`, {
 			id: id
-		}). then( res => {
+		}).then( res => {
 			if ( res.data.statusCode=='OK' ) {
 				toast.success('Xóa giày thành công', {
 					position: toast.POSITION.TOP_CENTER
 				})
 				getDataShoe();
 			}
-		}). catch( err => console.log(err))
+		}).catch( err => console.log(err))
 	}
 
 	const showDelConfirm = (id, title) => {
@@ -267,7 +267,7 @@ const AdminManage = () => {
 			quantity: quantityModal,
 			description: noteModal,
 			userId: user.id
-		}). then( res => {
+		}).then( res => {
 			if ( res.data.statusCode=='OK' ) {
 				toast.success('Thêm giày thành công', {
 					position: toast.POSITION.TOP_CENTER
@@ -275,7 +275,7 @@ const AdminManage = () => {
 				getDataShoe();
 				clearForm()
 			}
-		}). catch( err => console.log(err))
+		}).catch( err => console.log(err))
         handleClose();
     }
 	const [open, setOpen] = React.useState(false);

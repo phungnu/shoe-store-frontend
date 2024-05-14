@@ -2,8 +2,8 @@ import { Navigate } from "react-router-dom";
 import { userService } from "../service/user";
 
 const SecuredRoute = ({children}) => {
-    console.log(userService.get());
-    return userService.get()==null ? <Navigate to='/admin' /> : children;
+    const user = userService.get();
+    return (user == null || user.role !== 'ADMIN') ? <Navigate to='/home' /> : children;
 }
 
 export default SecuredRoute;

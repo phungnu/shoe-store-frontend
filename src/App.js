@@ -11,6 +11,7 @@ import Statistic from './conponents/screen/admin-manage/statistic/index';
 import SecuredRoute from './conponents/util/SecuredRoute';
 import Footer from './conponents/screen/footer';
 import Header from "./conponents/util/Header";
+import Order from './conponents/screen/order';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shoe-info" element={<ShoeInfo />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="order" element={<Order />} />
         <Route path="admin/manage" element={ <SecuredRoute> <AdminManage/> </SecuredRoute> } />
         <Route path="admin/statistic" element={ <SecuredRoute> <Statistic/> </SecuredRoute> } />
       </Routes>

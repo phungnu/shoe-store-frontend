@@ -63,3 +63,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.btn-view-bill, .btn-accept-bill{
+    margin-right: 10px;
+}

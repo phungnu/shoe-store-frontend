@@ -58,8 +58,15 @@ const Header = ({page}) => {
           await loginAPI(payload)
                .then(res => {
                if ( res.data.statusCode == 'OK') {
-                    userService.set(res.data.data)
-                    
+                    userService.set(res.data.data);
+                    console.log(res.data.data);
+                    toast.success('ĐĂNG NHẬP THÀNH CÔNG', {
+                         position: toast.POSITION.TOP_CENTER
+                    });
+                    if ( res.data.data.role == 'ADMIN' )
+                         navigate('/admin/manage');
+                    setLogged(true);
+                    hideModal();
                } else {
                     toast.error(res.data.message, {
                          position: toast.POSITION.TOP_CENTER
@@ -67,8 +74,6 @@ const Header = ({page}) => {
                }
                })
                .catch(err => console.log(err))
-          hideModal();
-          setLogged(true)
      }
 
      const onSignup = async () => {
@@ -76,17 +81,19 @@ const Header = ({page}) => {
                username: usernameSignup,
                password: passwordSignup,
                phone: phone,
-               confirmPass: confirmPassword,
-               address: address
+               confirmPassword: confirmPassword,
+               address: address,
+               name: name
           }
 
           await registerAPI(payload)
                .then(res => {
                if ( res.data.statusCode == 'OK') {
-                    // userService.set(res.data.data)
-                    // setloggged(true)
-                    // localStorage.removeItem("check")
                     console.log("register");
+                    toast.success('ĐĂNG KÝ THÀNH CÔNG', {
+                         position: toast.POSITION.TOP_CENTER
+                    });
+                    hideModalSignup();
                } else {
                     toast.error(res.data.message, {
                          position: toast.POSITION.TOP_CENTER
@@ -94,7 +101,23 @@ const Header = ({page}) => {
                }
                })
                .catch(err => console.log(err))
-          hideModalSignup();
+     }
+
+     const onLogout = () => {
+          userService.logout();
+          toast.success('ĐĂNG XUẤT THÀNH CÔNG', {
+               position: toast.POSITION.TOP_CENTER
+          })
+          navigate('/home');
+          setLogged(false);
+     }
+
+     const naviHome = () => {
+          navigate('/home')
+     }
+
+     const goToOrder = () => {
+          navigate('/order');
      }
 
      const [usernameLogin, setUsernameLogin] = useState('');
@@ -105,12 +128,13 @@ const Header = ({page}) => {
      const [phone, setPhone] = useState('');
      const [address, setAddress] = useState('');
      const [confirmPassword, setConfirmPassword] = useState('');
+     const [name, setName] = useState('');
 
      return (
           <div className="header"> 
                <Row>
                     <Col className='leftHeader' span={5}>
-                         <Image width={100} className='imageLogo' src='/image/myshoe.png' preview={false}/>
+                         <Image onClick={naviHome} width={100} className='imageLogo' src='/image/myshoe.png' preview={false}/>
                     </Col>
                     <Col span={13}>
                          <Search placeholder="Tìm kiếm sản phẩm..." style={{ width: 500, height:33 }} />
@@ -120,7 +144,10 @@ const Header = ({page}) => {
                               loggeduser ? 
                               <Row className='user-info-container'>
                                    <ShoppingCartOutlined onClick={changeToCart} className='logoCart' />
-                                   <div className='user-info'>Account</div>
+                                   <div className='user-info'>
+                                        <Image onClick={goToOrder} width={50} src='/image/order-logo.png' preview={false} /> 
+                                   </div>
+                                   <div className='user-info btn-logout' onClick={onLogout}>Logout</div>
                               </Row> 
                               :
                               <div>
@@ -157,6 +184,7 @@ const Header = ({page}) => {
 				<div className="content-modal-signup">
                          <div className='title-signup'>THÔNG TIN ĐĂNG KÝ</div>
                          <Input className='input-username1' placeholder='Tên tài khoản' onChange={e=>setUsernameSignup(e.target.value)}/>
+                         <Input className='input-name' placeholder='Họ và tên' onChange={e=>setName(e.target.value)}/>
                          <Input className='input-phone' placeholder='Số điện thoại' onChange={e=>setPhone(e.target.value)}/>
                          <Input className='input-address' placeholder='Địa chỉ' onChange={e=>setAddress(e.target.value)}/>
                          <Input type='password' className='input-pass1' placeholder='Mật khẩu' onChange={e=>setPasswordSignup(e.target.value)}/>
