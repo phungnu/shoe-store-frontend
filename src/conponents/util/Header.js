@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCartOutlined } from '@ant-design/icons';
+import { ShoppingCartOutlined, SettingOutlined } from '@ant-design/icons';
 import { loginAPI, registerAPI } from '../service/apis';
 import { userService } from '../service/user';
 
@@ -48,6 +48,10 @@ const Header = ({page}) => {
 	const hideModalSignup = () => {
 		setIsModalOpenSignup(false);
 	}
+
+     const goToAdmin = () => {
+          navigate('/admin/manage');
+     }
 
      const onLogin = async () => {
           const payload = {
@@ -143,6 +147,7 @@ const Header = ({page}) => {
                          {
                               loggeduser ? 
                               <Row className='user-info-container'>
+                                   { user.role == 'ADMIN' && <SettingOutlined className="icon-setting" onClick={goToAdmin}/>}
                                    <ShoppingCartOutlined onClick={changeToCart} className='logoCart' />
                                    <div className='user-info'>
                                         <Image onClick={goToOrder} width={50} src='/image/order-logo.png' preview={false} /> 
