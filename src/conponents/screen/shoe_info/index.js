@@ -148,11 +148,11 @@ const ShoeInfo = () => {
                                    </div>
                               </Col>
                               <Col span={5}></Col>
-                              <Col span={8}>
+                              {user!=null && <Col span={8}>
                                    <div className='add-to-cart' onClick={addToCart}>
                                         <p>{shoe.quantity > 0 ? 'Thêm vào giỏ hàng' : "Hết hàng"}</p>
                                    </div>
-                              </Col>
+                              </Col>}
                               <Col span={1}></Col>
                               {/* <Col>
                                    <div className='buy-now' >

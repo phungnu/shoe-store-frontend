@@ -71,6 +71,7 @@ const Header = ({page}) => {
                          navigate('/admin/manage');
                     setLogged(true);
                     hideModal();
+                    window.location.reload();
                } else {
                     toast.error(res.data.message, {
                          position: toast.POSITION.TOP_CENTER
