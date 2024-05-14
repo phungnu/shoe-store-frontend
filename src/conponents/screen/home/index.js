@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { Image, Row, Col } from "antd";
-import Header from "../../util/Header";
 import Shoes from "../../util/Shoes";
 import { useState, useEffect } from 'react';
 import { URL_API } from "../../config/constants";
@@ -49,7 +48,6 @@ const Home = () => {
 
 	return (
 		<div>
-			<Header page={'home'} />
 			<div className="introduce-container">
 				<div className="intro-image-ctn">
 					<Row>

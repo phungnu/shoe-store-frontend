@@ -6,38 +6,27 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { loginAPI, registerAPI } from '../service/apis';
+import { userService } from '../service/user';
 
 const { Search } = Input;
 
 const Header = ({page}) => {
 
-     const [styleHome, setStyleHome] = useState('home animation');
-     const [styleAbount, setStyleAbout] = useState('about');
+     const user = userService.get();
 
-     useEffect( () => {
-          if ( page=='home' ) {
-               setStyleHome('home animation')
-          } else {
-               setStyleHome('home')
-          }
-     }, [page])
+     const [loggeduser, setLogged] = useState(false);
+
+     useEffect(() => {
+          if (user != null) 
+            setLogged(true)
+     },[])
+
+     toast.configure();
 
      const navigate = useNavigate();
 
      const changeToCart = () => {
-          setStyleHome('home')
-          setStyleAbout('about')
           navigate('/cart')
-     }
-
-     const handleHome = () => {
-          setStyleHome('home animation')
-          setStyleAbout('about')
-          navigate('/')
-     }
-     
-     const handleAbout = () => {
-          setStyleHome('home')
      }
 
      const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,10 +58,8 @@ const Header = ({page}) => {
           await loginAPI(payload)
                .then(res => {
                if ( res.data.statusCode == 'OK') {
-                    // userService.set(res.data.data)
-                    // setloggged(true)
-                    // localStorage.removeItem("check")
-                    console.log("login");
+                    userService.set(res.data.data)
+                    
                } else {
                     toast.error(res.data.message, {
                          position: toast.POSITION.TOP_CENTER
@@ -80,6 +67,8 @@ const Header = ({page}) => {
                }
                })
                .catch(err => console.log(err))
+          hideModal();
+          setLogged(true)
      }
 
      const onSignup = async () => {
@@ -105,6 +94,7 @@ const Header = ({page}) => {
                }
                })
                .catch(err => console.log(err))
+          hideModalSignup();
      }
 
      const [usernameLogin, setUsernameLogin] = useState('');
@@ -126,13 +116,18 @@ const Header = ({page}) => {
                          <Search placeholder="Tìm kiếm sản phẩm..." style={{ width: 500, height:33 }} />
                     </Col>
                     <Col className='rightHeader' span={6}>
-                         {/* <p onClick={handleHome} className={styleHome}>HOME</p> */}
-                         {/* <p onClick={handleAbout} className={styleAbount}>ABOUT</p> */}
-                         <div>
-                              <ShoppingCartOutlined onClick={changeToCart} className='logoCart' />
-                              {/* <Image onClick={changeToCart} width={25} className='logoCart' src='/image/logo-cart.png' preview={false}/> */}
-                              <a onClick={showModal}>Đăng nhập</a> / <a onClick={showModalSignup}>Đăng ký</a>
-                         </div>
+                         {
+                              loggeduser ? 
+                              <Row className='user-info-container'>
+                                   <ShoppingCartOutlined onClick={changeToCart} className='logoCart' />
+                                   <div className='user-info'>Account</div>
+                              </Row> 
+                              :
+                              <div>
+                                   <a onClick={showModal}>Đăng nhập</a> / <a onClick={showModalSignup}>Đăng ký</a>
+                              </div>
+                         }
+                         
                          
                     </Col>
                </Row>

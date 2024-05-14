@@ -142,7 +142,7 @@ const Cart = () => {
 				shoeId: shoe.id
 			}
 			shoeBills.push(tmp)
-		}); 
+		});
 		await axios.post(`${URL_API}/bill`, {
 			address: address,
 			message: note,
@@ -342,7 +342,6 @@ const Cart = () => {
 
 	return (	
 		<div className="pageCart">
-			<Header page={"cart"} />
 			<Row className="content">
 				<Col className="product-name" span={10}>
 					Tên sản phẩm

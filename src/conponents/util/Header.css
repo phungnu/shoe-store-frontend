@@ -128,3 +128,8 @@
      color: #fff;
      font-weight: bold;
 }
+
+.user-info-container {
+     justify-content: center;
+     align-items: center;
+}
