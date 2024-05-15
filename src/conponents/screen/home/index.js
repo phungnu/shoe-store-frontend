@@ -46,6 +46,8 @@ const Home = ({searchText, shoeContainerRef}) => {
 
 	useEffect(() => {
 		console.log(searchText);
+		if ( !searchText )
+			return;
 		var newArray = [];
 		for ( var i in arrayShoeConstant){
 			if (arrayShoeConstant[i].name.toLowerCase().includes(searchText.toLowerCase())){

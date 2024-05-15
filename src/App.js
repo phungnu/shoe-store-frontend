@@ -24,7 +24,7 @@ function App() {
     <BrowserRouter>
       <Header page={'home'} setSearchText={setSearchText}/>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home  searchText={searchText} shoeContainerRef={shoeContainerRef} />} />
         <Route path="home" element={<Home searchText={searchText} shoeContainerRef={shoeContainerRef}/>} />
         <Route path="cart" element={<Cart />} />
         <Route path="shoe-info" element={<ShoeInfo />} />

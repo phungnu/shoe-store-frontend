@@ -23,10 +23,16 @@ const Header = ({page, setSearchText}) => {
      useEffect(() => {
           if (user != null) 
             setLogged(true)
+          if ( location == 'http://localhost:3000/' || location=='http://localhost:3000/home' ) {
+               setCurrentPage('home');
+          } else {
+               setCurrentPage('other');
+          }
      },[])
 
      useEffect(() => {
-          if ( location == 'http://localhost:3000' || location=='http://localhost:3000/home' ) {
+          setCurrentPage('home');
+          if ( location == 'http://localhost:3000/' || location=='http://localhost:3000/home' ) {
                setCurrentPage('home');
           } else {
                setCurrentPage('other');
