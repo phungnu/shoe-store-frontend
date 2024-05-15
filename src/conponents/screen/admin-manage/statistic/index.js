@@ -205,10 +205,10 @@ const Statistic = () => {
 						}
 						tmp2.push({
 							...listBill[i],
-							money: total,
+							money: formatter.format(total),
 							actionView: <Row>
-								<Button className="btn-view-bill" onClick={() => viewBill(listBill[i], total)}>View</Button>
-								{listBill[i].status == 0 ? <Row><Button onClick={() => acceptBill(listBill[i])} className="btn-accept-bill">Accept</Button> <Button onClick={() => cancelBill(listBill[i])} className="btn-cancel-bill">Cancel</Button></Row> : <></> }
+								<Button className="btn-view-bill" onClick={() => viewBill(listBill[i], total)}>Xem</Button>
+								{listBill[i].status == 0 ? <Row><Button onClick={() => acceptBill(listBill[i])} className="btn-accept-bill">Xác nhận</Button> <Button onClick={() => cancelBill(listBill[i])} className="btn-cancel-bill">Hủy</Button></Row> : <></> }
 							</Row>
 						})
 						console.log(listBill[i]);

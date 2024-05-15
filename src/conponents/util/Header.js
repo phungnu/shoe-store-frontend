@@ -10,16 +10,28 @@ import { userService } from '../service/user';
 
 const { Search } = Input;
 
-const Header = ({page}) => {
+const Header = ({page, setSearchText}) => {
+
+     var location = window.location.href;
 
      const user = userService.get();
 
      const [loggeduser, setLogged] = useState(false);
 
+     const [currentPage, setCurrentPage] = useState('home');
+
      useEffect(() => {
           if (user != null) 
             setLogged(true)
      },[])
+
+     useEffect(() => {
+          if ( location == 'http://localhost:3000' || location=='http://localhost:3000/home' ) {
+               setCurrentPage('home');
+          } else {
+               setCurrentPage('other');
+          }
+     }, [location])
 
      toast.configure();
 
@@ -142,7 +154,7 @@ const Header = ({page}) => {
                          <Image onClick={naviHome} width={100} className='imageLogo' src='/image/myshoe.png' preview={false}/>
                     </Col>
                     <Col span={13}>
-                         <Search placeholder="Tìm kiếm sản phẩm..." style={{ width: 500, height:33 }} />
+                         { currentPage=='home' ? <Search onChange={(e) => setSearchText(e.target.value)} placeholder="Tìm kiếm sản phẩm..." style={{ width: 500, height:33 }} /> : <></> }
                     </Col>
                     <Col className='rightHeader' span={6}>
                          {

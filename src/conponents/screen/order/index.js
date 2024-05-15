@@ -4,7 +4,7 @@ import "./style.css";
 import axios from "axios";
 import { formatter } from "../../service/format";
 import { userService } from "../../service/user";
-import { getBillByUserAPI } from "../../service/apis";
+import { getBillByUserAPI, updateStatusBillAPI } from "../../service/apis";
 
 const column = [
 	{
@@ -99,6 +99,26 @@ const Order = () => {
     const [dataBill, setDataBill] = useState([]);
 
 
+    
+	const cancelBill = (bill) => {
+		updateStatusBill(bill, 'cancel');
+	}
+
+	const updateStatusBill = async (bill, action) => {
+		var payload = {
+			id: bill.id,
+			status: action == 'accept' ? 1 : 2
+		}
+		await updateStatusBillAPI(payload)
+			.then(res => {
+				if ( res.data.statusCode == 'OK') {
+					getDataBill();
+				}
+			})
+			.catch(err => console.log(err))
+	}
+
+
 	const getDataBill = async () => {
         var payload = {id: user.id};
 		await getBillByUserAPI(payload)
@@ -116,8 +136,11 @@ const Order = () => {
 						}
 						tmp2.push({
 							...listBill[i],
-							money: total,
-							actionView: <Button className="btn-view-bill" onClick={() => viewBill(listBill[i], total)}>View</Button>
+							money: formatter.format(total),
+							actionView:  <Row>
+                                <Button className="btn-view-bill" onClick={() => viewBill(listBill[i], total)}>Xem</Button>
+                                {listBill[i].status == 0 ? <Button onClick={() => cancelBill(listBill[i])} className="btn-cancel-bill">Hủy</Button> : <></> }
+                            </Row>
 						})
 						console.log(listBill[i]);
 					}

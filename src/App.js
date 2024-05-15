@@ -13,14 +13,19 @@ import Footer from './conponents/screen/footer';
 import Header from "./conponents/util/Header";
 import Order from './conponents/screen/order';
 
+import React, { useRef, useState } from "react";
 
 function App() {
+
+  const [searchText, setSearchText] = useState('');
+  const shoeContainerRef = useRef(null);
+
   return (
     <BrowserRouter>
-      <Header page={'home'} />
+      <Header page={'home'} setSearchText={setSearchText}/>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="home" element={<Home />} />
+        <Route path="home" element={<Home searchText={searchText} shoeContainerRef={shoeContainerRef}/>} />
         <Route path="cart" element={<Cart />} />
         <Route path="shoe-info" element={<ShoeInfo />} />
         <Route path="admin" element={<Admin />} />

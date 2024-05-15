@@ -18,8 +18,9 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 
 
-const Home = () => {
+const Home = ({searchText, shoeContainerRef}) => {
 	const [arrayShoe, setArrayShoes] = useState([]);
+	const [arrayShoeConstant, setArrayShoesconstant] = useState([]);
 
 	const getDataListShoe = async () => {
 		let response;
@@ -38,9 +39,22 @@ const Home = () => {
 		console.log(code);
 		if (code == 200) {
 			setArrayShoes(response.data);
+			setArrayShoesconstant(response.data);
 		}
 		return response;
 	}
+
+	useEffect(() => {
+		console.log(searchText);
+		var newArray = [];
+		for ( var i in arrayShoeConstant){
+			if (arrayShoeConstant[i].name.toLowerCase().includes(searchText.toLowerCase())){
+				newArray.push(arrayShoeConstant[i]);
+			}
+		}
+		setArrayShoes(newArray);
+		shoeContainerRef.current?.scrollIntoView({ behavior: 'smooth'});
+	}, [searchText])
 
 	useEffect(() => {
 		getDataListShoe()
@@ -85,7 +99,7 @@ const Home = () => {
 					</Row>
 				</div>
 			</div>
-			<div className="title-wrapper">
+			<div className="title-wrapper"  ref={shoeContainerRef}>
 				<div className="main-title">
 					SẢN PHẨM MỚI
 				</div>
