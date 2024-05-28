@@ -29,7 +29,11 @@ const columnsLeft = [
 		dataIndex: 'imageUrl',
 	},
 	{
-		title: 'Giá sản phẩm',
+		title: 'Giá nhập sản phẩm',
+		dataIndex: 'cost',
+	},
+	{
+		title: 'Giá bán sản phẩm',
 		dataIndex: 'price',
 	},
 	{
@@ -99,6 +103,7 @@ const AdminManage = () => {
 									name : data[i].name,
 									imageUrl: <Image src={data[i].imageUrl} preview={false} width={140} />,
 									price: formatter.format(data[i].price),
+									cost: formatter.format(data[i].cost),
 									quantity: data[i].quantity,
 									delete: <Tooltip title='Xóa'><Image onClick={() => showDelConfirm(data[i].id, data[i].name)} className="icon-delete" src = '/image/delete.png' preview = {false} /></Tooltip>,
 									edit: <Tooltip title='Sửa'><Image onClick={() => onOpenModalEdit(data[i])} className="icon-edit" src = '/image/edit.png' preview = {false} /></Tooltip>
@@ -134,6 +139,7 @@ const AdminManage = () => {
 		setModeModal('edit');
 		setNameShoeModal(shoe.name);
 		setPriceShoeModal(shoe.price);
+		setCostShoeModal(shoe.cost);
 		setNoteModal(shoe.description);
 		setImageUrlModal(shoe.imageUrl);
 		setFileList([{
@@ -149,6 +155,7 @@ const AdminManage = () => {
 
 	const [nameShoeModal, setNameShoeModal] = useState('');
 	const [priceShoeModal, setPriceShoeModal] = useState('');
+	const [costShoeModal, setCostShoeModal] = useState('');
 	const [imageUrlModal, setImageUrlModal] = useState('');
 	const [noteModal, setNoteModal] = useState('');
 	const [quantityModal, setQuantityModal] = useState('');	
@@ -156,6 +163,7 @@ const AdminManage = () => {
 	const clearForm = () => {
 		setNameShoeModal('');
 		setPriceShoeModal('');
+		setCostShoeModal('');
 		setImageUrlModal('');
 		setNoteModal('');
 		setQuantityModal('');
@@ -169,6 +177,7 @@ const AdminManage = () => {
 			id: idEdit,
 			name: nameShoeModal,
 			price: priceShoeModal,
+			cost: costShoeModal,
 			description: noteModal,
 			imageUrl: fileList[0].url,
 			quantity: quantityModal
@@ -264,6 +273,7 @@ const AdminManage = () => {
 			name : nameShoeModal,
 			imageUrl: fileList[0].url,
 			price: priceShoeModal,
+			cost: costShoeModal,
 			quantity: quantityModal,
 			description: noteModal,
 			userId: user.id
@@ -359,8 +369,12 @@ const AdminManage = () => {
 										<TextArea rows={5} value={noteModal} onChange={(e) => setNoteModal(e.target.value)} placeholder="mô tả" />
 									</Row>
 									<Row style={{marginTop: 10}}>
-										<p>Giá sản phẩm</p>
-										<Input value={priceShoeModal} onChange={(e) => setPriceShoeModal(e.target.value)}  placeholder="Nhập giá sản phẩm" />
+										<p>Giá nhập sản phẩm</p>
+										<Input value={costShoeModal} onChange={(e) => setCostShoeModal(e.target.value)}  placeholder="Nhập giá nhập sản phẩm" />
+									</Row>
+									<Row style={{marginTop: 10}}>
+										<p>Giá bán sản phẩm</p>
+										<Input value={priceShoeModal} onChange={(e) => setPriceShoeModal(e.target.value)}  placeholder="Nhập giá bán sản phẩm" />
 									</Row>
 									<Row style={{marginTop: 10}}>
 										<p>Số lượng</p>
