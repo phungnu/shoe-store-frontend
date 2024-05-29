@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Image, Row, Col } from "antd";
+import { Image, Row, Col, Button } from "antd";
 import Shoes from "../../util/Shoes";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { URL_API } from "../../config/constants";
 import axios from 'axios';
 import "./style.css";
@@ -14,6 +14,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
+
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
+import { saveAs } from 'file-saver';
 
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 
@@ -62,9 +66,46 @@ const Home = ({searchText, shoeContainerRef}) => {
 		getDataListShoe()
 	}, [])
 
+	const contentRef = useRef();
+
+	const onExport = async () => {
+		const content = contentRef.current.innerHTML;
+	
+		const response = await fetch('/template.docx');
+		console.log(response);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const arrayBuffer = await response.arrayBuffer();
+		const zip = new PizZip(arrayBuffer);
+	
+		const doc = new Docxtemplater(zip, {
+			paragraphLoop: true,
+			linebreaks: true,
+		});
+	
+		doc.setData({ content });
+	
+		doc.render();
+	
+		const out = doc.getZip().generate({
+			type: 'blob',
+			mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		});
+	
+		saveAs(out, 'document123.docx');
+	};
+
 	return (
 		<div>
 			<div className="introduce-container">
+				<Button onClick={onExport}>Export</Button>
+				<div ref={contentRef} className="export-container">
+					<div className="export-header-container" style={{textAlign: 'center'}}>
+						<h2>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>
+						<h4>Độc lập - Tự do - Hạnh phúc</h4>
+					</div>
+				</div>
 				<div className="intro-image-ctn">
 					<Row>
 						<Col xs={24} sm={12} md={6} lg={6} xl={6}>
