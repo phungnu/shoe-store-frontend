@@ -67,3 +67,14 @@
 .btn-view-bill, .btn-accept-bill{
     margin-right: 10px;
 }
+
+.btn-export {
+    background: rgba(10, 67, 127, 1);
+    font-weight: bold;
+    color: #fff;
+}
+
+.export-container {
+    align-items: center;
+    margin-bottom: 20px;
+}

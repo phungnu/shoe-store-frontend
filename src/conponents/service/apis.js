@@ -20,3 +20,5 @@ export const createBillAPI = async(payload) => axios.post(`${URL_API}/bill`, pay
 export const updateStatusBillAPI = async(payload) => axios.post(`${URL_API}/bill/updateStatus`, payload)
 
 export const getBillByUserAPI = async(payload) => axios.post(`${URL_API}/bill/user`, payload)
+
+export const getDataExport = async(payload) => axios.get(`${URL_API}/bill/statistics?month=${payload.month}&year=${payload.year}`)

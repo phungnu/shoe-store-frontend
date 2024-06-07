@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from "react";
-import { Image, Input, Button, Row, Col, Table, Modal, Tooltip, List, Avatar  } from 'antd';
+import { Image, Input, Button, Row, Col, Table, Modal, Tooltip, List, Avatar, Select  } from 'antd';
 import "./style.css";
 import Toolbar from "../Toolbar";
 import {
@@ -14,7 +14,12 @@ import { Bar } from 'react-chartjs-2';
 import { URL_API } from "../../../config/constants"
 import axios from "axios";
 import { formatter } from "../../../service/format";
-import { updateStatusBillAPI } from "../../../service/apis";
+import { updateStatusBillAPI, getDataExport } from "../../../service/apis";
+
+import { Document, Packer, Paragraph, TextRun, Table as TableDocx, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } from 'docx';
+import { saveAs } from "file-saver";
+
+import {toast} from 'react-toastify';
 
 ChartJS.register(
 	CategoryScale,
@@ -51,7 +56,39 @@ const column = [
 	},
 ]
 
+const optionMonthExport = [
+	{
+		value: "-1",
+		label: "Choose month"
+	},
+	{
+		value: "01/2024",
+		label: "Thang 1 - 2024"
+	},
+	{
+		value: "02/2024",
+		label: "Thang 2 - 2024"
+	},
+	{
+		value: "03/2024",
+		label: "Thang 3 - 2024"
+	},
+	{
+		value: "04/2024",
+		label: "Thang 4 - 2024"
+	},
+	{
+		value: "05/2024",
+		label: "Thang 5 - 2024"
+	},
+	{
+		value: "06/2024",
+		label: "Thang 6 - 2024"
+	}
+]
+
 const Statistic = () => {
+	toast.configure();
 
 	const templateData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -255,6 +292,309 @@ const Statistic = () => {
 		getDataShoeWithBill();
 	}, []);
 	
+	const onExport = async () => {
+
+		if ( monthExport == "-1" ) {
+			toast.error("You must choose time to export", {
+				position: toast.POSITION.TOP_CENTER
+		   })
+		}
+
+		var infoExport = monthExport.split('/');
+
+		var payload = {
+			month: parseInt(infoExport[0]),
+			year: parseInt(infoExport[1])
+		}
+		
+		var totalRevenue = 0, profit = 0, totalOrders = 0, successRate = 0, previousMonthRevenue = 0, currentMonthRevenue = 0, topProducts = [], growthRate = 0, bestMonth = {};
+		
+		await getDataExport(payload)
+			.then( res => {
+				if ( res.data.statusCode == 'OK') {
+					var resData = res.data.data;
+					totalRevenue = resData.totalRevenue;
+					profit = resData.profit;
+					totalOrders = resData.totalOrders;
+					successRate = resData.successRate;
+					previousMonthRevenue = resData.previousMonthRevenue;
+					currentMonthRevenue = resData.currentMonthRevenue;
+					growthRate = resData.growthRate;
+					topProducts = resData.topProducts;
+					bestMonth = resData.bestMonth;
+				}
+			})
+			.catch(err => console.log(err))
+
+		const doc = new Document({
+			sections: [
+				{
+					properties: {},
+					children: [
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "Độc lập – Tự do – Hạnh phúc",
+									size: 28,
+									break: 1,
+								}),
+							],
+							alignment: AlignmentType.CENTER,
+						}),
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: "Hà Nội, ngày ... tháng ... năm ...",
+									size: 28,
+									break: 1,
+								}),
+							],
+							alignment: AlignmentType.RIGHT,
+						}),
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: "BÁO CÁO DOANH THU KẾT QUẢ HOẠT ĐỘNG KINH DOANH",
+									bold: true,
+									size: 30,
+									break: 2,
+								}),
+								new TextRun({
+									text: "Tháng " + payload.month,
+									bold: true,
+									size: 28,
+									break: 1,
+								}),
+							],
+							alignment: AlignmentType.CENTER,
+						}),
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: "Đơn vị báo cáo: Myshoes",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "Người lập báo cáo: ...",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "1. Tổng doanh thu: " + totalRevenue,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "2. Lợi nhuận thu được: " + profit,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "3. Tổng số đơn hàng bán ra: " + totalOrders,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "4. Tỉ lệ đơn hàng thành công: " + successRate,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "5. Tỉ lệ khách hàng truy cập thành khách hàng tiềm năng: ...",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "6. Doanh thu tháng trước: " + previousMonthRevenue,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "7. Doanh thu tháng này: " + currentMonthRevenue,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "8. Tháng có doanh thu cao nhất: " + bestMonth.month,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "9. Mức độ tăng trưởng doanh thu so với tháng trước: " + growthRate,
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "10. Top mặt hàng được bán chạy",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "    a. Top 1: " +  topProducts.length > 0 ? topProducts[0].name : "..."	+ " Số lượt bán: " + topProducts.length > 0 ? topProducts[0].amount : "...",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "    b. Top 2: " + topProducts.length > 1 ? topProducts[1].name : "..."	+ " Số lượt bán: " + topProducts.length > 1 ? topProducts[1].amount : "...",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "    c. Top 3: " + topProducts.length > 2 ? topProducts[2].name : "..."	+ " Số lượt bán: " + topProducts.length > 2 ? topProducts[2].amount : "...",
+									size: 28,
+									break: 1,
+								}),
+								new TextRun({
+									text: "11.  Thành phố có doanh thu cao nhất: ...",
+									size: 28,
+									break: 1,
+								}),
+							],
+							alignment: AlignmentType.LEFT,
+							spacing: {
+								line: 400
+							},
+						}),
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: "",
+									break: 2, // Thêm 2 dòng trống
+								}),
+							],
+						}),
+						new TableDocx({
+							rows: [
+								new TableRow({
+									children: [
+										new TableCell({
+											children: [
+												new Paragraph({
+													children: [
+														new TextRun({
+															text: "Quản lý cửa hàng",
+															bold: true,
+															size: 28,
+														}),
+													],
+													alignment: AlignmentType.LEFT,
+												}),
+											],
+											borders: {
+												top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+											},
+											width: {
+												size: 50,
+												type: WidthType.PERCENTAGE,
+											},
+										}),
+										new TableCell({
+											children: [
+												new Paragraph({
+													children: [
+														new TextRun({
+															text: "Người báo cáo",
+															bold: true,
+															size: 28,
+														}),
+													],
+													alignment: AlignmentType.RIGHT,
+												}),
+											],
+											borders: {
+												top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+											},
+											width: {
+												size: 50,
+												type: WidthType.PERCENTAGE,
+											},
+										}),
+									],
+								}),
+								new TableRow({
+									children: [
+										new TableCell({
+											children: [
+												new Paragraph({
+													children: [
+														new TextRun({
+															text: "(Ký và ghi rõ họ tên)",
+															size: 28,
+														}),
+													],
+													alignment: AlignmentType.LEFT,
+												}),
+											],
+											borders: {
+												top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+											},
+											width: {
+												size: 50,
+												type: WidthType.PERCENTAGE,
+											},
+										}),
+										new TableCell({
+											children: [
+												new Paragraph({
+													children: [
+														new TextRun({
+															text: "(Ký và ghi rõ họ tên)",
+															size: 28,
+														}),
+													],
+													alignment: AlignmentType.RIGHT,
+												}),
+											],
+											borders: {
+												top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+												right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+											},
+											width: {
+												size: 50,
+												type: WidthType.PERCENTAGE,
+											},
+										}),
+									],
+								}),
+							],
+							width: {
+								size: 100,
+								type: WidthType.PERCENTAGE,
+							},
+						}),
+					],
+				},
+			],
+		});
+
+		Packer.toBlob(doc).then((blob) => {
+			saveAs(blob, monthExport+".docx");
+		});
+	};
+
+	const [monthExport, setMonthExport] = useState("-1");
+
+	const handleChange = (value) => {
+		setMonthExport(value);
+	}
+
 	return (
 		<div className="content-all">
 			<Row>
@@ -263,6 +603,17 @@ const Statistic = () => {
 				</Col>
 				<Col span={1}></Col>
 				<Col span={19}>
+					<Row className="export-container">
+						<Select 
+							defaultValue="-1"
+							style={{
+								width: 200,
+							}}
+							onChange={handleChange}
+							options={optionMonthExport}
+						/>
+						<Button className="btn-export" onClick={onExport}>Export</Button>
+					</Row>
 					<Row  className="center">
 						<Table 
 							columns={column}
