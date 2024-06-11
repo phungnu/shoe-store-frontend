@@ -307,7 +307,7 @@ const Statistic = () => {
 			year: parseInt(infoExport[1])
 		}
 		
-		var totalRevenue = 0, profit = 0, totalOrders = 0, successRate = 0, previousMonthRevenue = 0, currentMonthRevenue = 0, topProducts = [], growthRate = 0, bestMonth = {};
+		var totalRevenue = 0, potential = 0, profit = 0, totalOrders = 0, successRate = 0, previousMonthRevenue = 0, currentMonthRevenue = 0, topProducts = [], growthRate = 0, bestMonth = {};
 		
 		await getDataExport(payload)
 			.then( res => {
@@ -322,6 +322,7 @@ const Statistic = () => {
 					growthRate = resData.growthRate;
 					topProducts = resData.topProducts;
 					bestMonth = resData.bestMonth;
+					potential = resData.potential;
 				}
 			})
 			.catch(err => console.log(err))
@@ -406,7 +407,7 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "5. Tỉ lệ khách hàng truy cập thành khách hàng tiềm năng: ...",
+									text: "5. Tỉ lệ khách hàng truy cập thành khách hàng tiềm năng: " + potential,
 									size: 28,
 									break: 1,
 								}),
@@ -623,7 +624,8 @@ const Statistic = () => {
 							}}
 						/>
 					</Row>
-					<Row  className="center">
+					<iframe title="dashboard" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=76ea653c-8d77-43a7-8912-54fdb9bbbc68&autoAuth=true&ctid=e7572e92-7aee-4713-a3c4-ba64888ad45f" frameborder="0" allowFullScreen="true"></iframe>
+					<Row  className="center hidden">
 						<Col className="sta-content" span={21}>
 							<p className="title-top">Biểu đồ doanh thu trong năm</p>
 							<Bar data={chartData} options={options}/>
