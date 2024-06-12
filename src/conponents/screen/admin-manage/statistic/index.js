@@ -20,7 +20,7 @@ import { Document, Packer, Paragraph, TextRun, Table as TableDocx, TableRow, Tab
 import { saveAs } from "file-saver";
 
 import {toast} from 'react-toastify';
-
+import { userService } from '../../../service/user';
 ChartJS.register(
 	CategoryScale,
 	LinearScale,
@@ -89,6 +89,8 @@ const optionMonthExport = [
 
 const Statistic = () => {
 	toast.configure();
+
+	const user = userService.get();
 
 	const templateData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -298,16 +300,19 @@ const Statistic = () => {
 			toast.error("You must choose time to export", {
 				position: toast.POSITION.TOP_CENTER
 		   })
+		   return;
 		}
 
 		var infoExport = monthExport.split('/');
+
+		const current = new Date();
 
 		var payload = {
 			month: parseInt(infoExport[0]),
 			year: parseInt(infoExport[1])
 		}
 		
-		var totalRevenue = 0, profit = 0, totalOrders = 0, successRate = 0, previousMonthRevenue = 0, currentMonthRevenue = 0, topProducts = [], growthRate = 0, bestMonth = {};
+		var totalRevenue = 0, profit = 0, totalOrders = 0, successRate = 0, previousMonthRevenue = 0, currentMonthRevenue = 0, topProducts = null, growthRate = 0, bestMonth = {};
 		
 		await getDataExport(payload)
 			.then( res => {
@@ -320,7 +325,7 @@ const Statistic = () => {
 					previousMonthRevenue = resData.previousMonthRevenue;
 					currentMonthRevenue = resData.currentMonthRevenue;
 					growthRate = resData.growthRate;
-					topProducts = resData.topProducts;
+					topProducts = JSON.parse(JSON.stringify(resData.topProducts));
 					bestMonth = resData.bestMonth;
 				}
 			})
@@ -349,7 +354,7 @@ const Statistic = () => {
 						new Paragraph({
 							children: [
 								new TextRun({
-									text: "Hà Nội, ngày ... tháng ... năm ...",
+									text: "Hà Nội, ngày "+ current.getDate() + " tháng " + (current.getMonth() + 1) + " năm " + current.getFullYear(),
 									size: 28,
 									break: 1,
 								}),
@@ -365,7 +370,7 @@ const Statistic = () => {
 									break: 2,
 								}),
 								new TextRun({
-									text: "Tháng " + payload.month,
+									text: "Tháng " + payload.month + '/' + payload.year,
 									bold: true,
 									size: 28,
 									break: 1,
@@ -381,7 +386,7 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "Người lập báo cáo: ...",
+									text: "Người lập báo cáo: " + user.name,
 									size: 28,
 									break: 1,
 								}),
@@ -426,7 +431,7 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "9. Mức độ tăng trưởng doanh thu so với tháng trước: " + growthRate,
+									text: "9. Mức độ tăng trưởng doanh thu so với tháng trước: " + (Math.round(growthRate*100)/100) + '%',
 									size: 28,
 									break: 1,
 								}),
@@ -436,17 +441,17 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "    a. Top 1: " +  topProducts.length > 0 ? topProducts[0].name : "..."	+ " Số lượt bán: " + topProducts.length > 0 ? topProducts[0].amount : "...",
+									text: " a. Top 1: " +  (topProducts.length > 0 ? topProducts[0].name : "..."	)+ " Số lượt bán: " + topProducts.length > 0 ? topProducts[0].amount : "...",
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "    b. Top 2: " + topProducts.length > 1 ? topProducts[1].name : "..."	+ " Số lượt bán: " + topProducts.length > 1 ? topProducts[1].amount : "...",
+									text: " b. Top 2: " + (topProducts.length > 1 ? topProducts[1].name : "...")	+ " Số lượt bán: " + topProducts.length > 1 ? topProducts[1].amount : "...",
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "    c. Top 3: " + topProducts.length > 2 ? topProducts[2].name : "..."	+ " Số lượt bán: " + topProducts.length > 2 ? topProducts[2].amount : "...",
+									text: " c. Top 3: " + (topProducts.length > 2 ? topProducts[2].name : "...")	+ " Số lượt bán: " + topProducts.length > 2 ? topProducts[2].amount : "...",
 									size: 28,
 									break: 1,
 								}),
@@ -585,7 +590,7 @@ const Statistic = () => {
 		});
 
 		Packer.toBlob(doc).then((blob) => {
-			saveAs(blob, monthExport+".docx");
+			saveAs(blob, "Report-" + monthExport+".docx");
 		});
 	};
 
