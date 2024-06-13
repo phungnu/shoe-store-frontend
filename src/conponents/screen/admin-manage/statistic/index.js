@@ -392,12 +392,12 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "1. Tổng doanh thu: " + totalRevenue,
+									text: "1. Tổng doanh thu: " + formatter.format(totalRevenue),
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "2. Lợi nhuận thu được: " + profit,
+									text: "2. Lợi nhuận thu được: " +formatter.format(profit),
 									size: 28,
 									break: 1,
 								}),
@@ -407,22 +407,22 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: "4. Tỉ lệ đơn hàng thành công: " + successRate,
+									text: "4. Tỉ lệ đơn hàng thành công: " + successRate + '%',
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "5. Tỉ lệ khách hàng truy cập thành khách hàng tiềm năng: " + potential,
+									text: "5. Tỉ lệ khách hàng truy cập thành khách hàng tiềm năng: " + potential + '%',
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "6. Doanh thu tháng trước: " + previousMonthRevenue,
+									text: "6. Doanh thu tháng trước: " + formatter.format(previousMonthRevenue),
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: "7. Doanh thu tháng này: " + currentMonthRevenue,
+									text: "7. Doanh thu tháng này: " + formatter.format(currentMonthRevenue),
 									size: 28,
 									break: 1,
 								}),
@@ -442,17 +442,17 @@ const Statistic = () => {
 									break: 1,
 								}),
 								new TextRun({
-									text: " a. Top 1: " +  (topProducts.length > 0 ? topProducts[0].name : "..."	)+ " Số lượt bán: " + topProducts.length > 0 ? topProducts[0].amount : "...",
+									text: " a. Top 1: " + topProducts[0].name  + " Số lượt bán: " + topProducts[0].amount,
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: " b. Top 2: " + (topProducts.length > 1 ? topProducts[1].name : "...")	+ " Số lượt bán: " + topProducts.length > 1 ? topProducts[1].amount : "...",
+									text: " b. Top 2: " + topProducts[1].name  + " Số lượt bán: " + topProducts[1].amount,
 									size: 28,
 									break: 1,
 								}),
 								new TextRun({
-									text: " c. Top 3: " + (topProducts.length > 2 ? topProducts[2].name : "...")	+ " Số lượt bán: " + topProducts.length > 2 ? topProducts[2].amount : "...",
+									text: " c. Top 3: " + topProducts[2].name  + " Số lượt bán: " + topProducts[2].amount,
 									size: 28,
 									break: 1,
 								}),
